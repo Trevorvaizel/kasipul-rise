@@ -15,7 +15,8 @@
     ],
     "rewrites": [
       { "source": "/", "destination": "/kasipul-rise-festival-april-2026.html" },
-      { "source": "/collector", "destination": "/collector.html" }
+      { "source": "/collector", "destination": "/collector.html" },
+      { "source": "/controller", "destination": "/collector.html" }
     ],
     "headers": [
       {

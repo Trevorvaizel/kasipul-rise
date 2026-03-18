@@ -24,6 +24,9 @@
       --ts:     #71717a;
       --tt:     #3f3f46;
       --nav-h:  60px;
+      --safe-top: env(safe-area-inset-top, 0px);
+      --nav-offset: calc(var(--nav-h) + var(--safe-top));
+      --shared-panel-bg: radial-gradient(circle at 50% -8%, rgba(251,191,36,0.09), rgba(16,185,129,0.05) 42%, #040404 74%);
     }
 
     body {
@@ -31,15 +34,16 @@
       background: var(--black);
       color: var(--tp);
       overflow: hidden;
+      overscroll-behavior: none;
       -webkit-font-smoothing: antialiased;
     }
 
     /* ── NAV — solid black, no transparency (fixes all panel overlaps) ── */
     nav {
       position: fixed; top: 0; left: 0; right: 0; z-index: 500;
-      height: var(--nav-h);
+      height: var(--nav-offset);
       display: flex; align-items: center; justify-content: space-between;
-      padding: 0 32px;
+      padding: var(--safe-top) 32px 0;
       background: #000;
       border-bottom: 1px solid var(--border);
     }
@@ -72,6 +76,7 @@
       transition: background 0.2s;
     }
     .nav-btn:hover { background: #fcd34d; }
+    .nav-btn .label-short { display: none; }
 
     /* ── HORIZONTAL TRACK ── */
     .pin-master { width: 100vw; height: 100vh; overflow: hidden; position: relative; }
@@ -93,10 +98,30 @@
       overflow-x: hidden;
       position: relative;
       contain: layout;
+      overscroll-behavior-y: contain;
+      -webkit-overflow-scrolling: touch;
+      scroll-padding-top: calc(var(--nav-offset) + 8px);
     }
 
     .panel::-webkit-scrollbar { width: 2px; }
     .panel::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); }
+    .panel-shared { background: var(--shared-panel-bg) !important; }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity 0.42s ease, transform 0.42s cubic-bezier(0.2, 0.65, 0.2, 1);
+      transition-delay: var(--reveal-delay, 0ms);
+    }
+    .panel.is-active .reveal {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .horizontal-track { transition: none; }
+      .reveal { opacity: 1; transform: none; transition: none; }
+    }
 
     /* ── EYEBROW label — Swiss utility ── */
     .eyebrow {
@@ -111,7 +136,7 @@
       display: flex; flex-direction: column;
       align-items: center; justify-content: center;
       text-align: center;
-      padding: calc(var(--nav-h) + 48px) 32px 80px;
+      padding: calc(var(--nav-offset) + 48px) 32px 80px;
       position: relative;
     }
 
@@ -228,11 +253,37 @@
     .cd-sep { font-size: 16px; font-weight: 300; color: var(--tt); padding-bottom: 10px; }
 
     /* ── STORY ── */
+    .story-panel {
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      align-items: center;
+      background: radial-gradient(circle at center, #111, #000);
+    }
+
     .story {
-      padding: calc(var(--nav-h) + 40px) 40px 72px;
+      padding: calc(var(--nav-offset) + 40px) 40px 72px;
       max-width: 760px;
       margin: 0 auto;
       text-align: center;
+    }
+    .story.story-wide { max-width: 800px; }
+    .story .story-kicker { display: block; text-align: center; }
+    .story h2.story-main-title { text-align: center; font-size: clamp(32px, 8vw, 84px); }
+    .story p.story-lead {
+      text-align: center;
+      font-size: clamp(15px, 1.8vw, 20px);
+      line-height: 1.6;
+      color: var(--ts);
+      max-width: 600px;
+      margin: 0 auto 40px;
+    }
+    .story .pull.story-quote { text-align: center; margin: 60px auto; }
+    .story .luo-seal.story-seal { margin-top: 16px; }
+    .story p.story-closing {
+      text-align: center;
+      font-size: clamp(15px, 1.6vw, 18px);
+      color: var(--ts);
     }
 
     .story h2 {
@@ -264,7 +315,7 @@
       display: flex; flex-direction: column;
       justify-content: center; min-height: 100vh;
     }
-    .counter-inner { max-width: 580px; margin: 0 auto; padding: calc(var(--nav-h) + 32px) 28px 56px; }
+    .counter-inner { max-width: 580px; margin: 0 auto; padding: calc(var(--nav-offset) + 32px) 28px 56px; }
 
     .counter-top { text-align: center; margin-bottom: 36px; }
     .counter-top h2 { font-size: clamp(24px, 4vw, 40px); font-weight: 800; letter-spacing: -0.025em; margin-bottom: 8px; }
@@ -315,7 +366,7 @@
     /* ── M-PESA PANEL ── */
     .mpesa-panel-inner {
       max-width: 520px; margin: 0 auto;
-      padding: calc(var(--nav-h) + 32px) 24px 48px;
+      padding: calc(var(--nav-offset) + 32px) 24px 48px;
       display: flex; flex-direction: column; align-items: center;
       justify-content: center; min-height: 100vh; text-align: center;
     }
@@ -364,7 +415,7 @@
     /* ── COMMUNITY BOARD ── */
     .boards-panel-inner {
       max-width: 960px; margin: 0 auto;
-      padding: calc(var(--nav-h) + 24px) 28px 40px;
+      padding: calc(var(--nav-offset) + 24px) 28px 40px;
       display: flex; flex-direction: column;
       justify-content: center; min-height: 100vh;
     }
@@ -420,38 +471,171 @@
     /* ── PROGRAM ── */
     #program-slide { background: #050505; }
 
-    .program-inner { padding: calc(var(--nav-h) + 24px) 0 0; max-width: 1100px; margin: 0 auto; }
+    .program-inner { padding: calc(var(--nav-offset) + 24px) 0 0; max-width: 1100px; margin: 0 auto; }
 
     .program-head { text-align: center; padding: 0 40px; margin-bottom: 48px; }
     .program-head h2 { font-size: clamp(36px, 6vw, 64px); font-weight: 800; letter-spacing: -0.025em; line-height: 0.95; margin-bottom: 12px; }
     .program-head h2 em { font-style: normal; color: var(--gold); }
     .program-head p { font-size: 14px; color: var(--ts); max-width: 360px; margin: 0 auto; }
 
-    .event-list { display: flex; flex-direction: column; }
-    .ev-row {
-      display: grid; grid-template-columns: 1fr 1fr;
-      border-top: 1px solid var(--border); min-height: 300px;
+    .program-chips {
+      display: flex; align-items: center; justify-content: center;
+      gap: 10px; flex-wrap: wrap;
+      padding: 0 18px;
+      margin-bottom: 24px;
     }
-    .ev-row.rev { direction: rtl; }
-    .ev-row.rev > * { direction: ltr; }
-    .ev-photo { position: relative; overflow: hidden; background: var(--s1); min-height: 240px; }
-    .photo-slot {
-      position: absolute; inset: 0;
-      display: flex; flex-direction: column; align-items: center; justify-content: center;
-      gap: 10px; color: var(--ts);
-      font-size: 9px; letter-spacing: 0.18em; text-transform: uppercase;
-      border-right: 1px solid var(--border);
+    .program-chip {
+      padding: 8px 16px;
+      border: 1px solid var(--border);
+      border-radius: 0;
+      background: rgba(255,255,255,0.01);
+      color: var(--ts);
+      font-size: 10px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
+      cursor: pointer;
+      transition: border-color 0.2s, color 0.2s, transform 0.2s, background 0.2s;
     }
-    .ev-row.rev .photo-slot { border-right: none; border-left: 1px solid var(--border); }
-    .photo-slot-icon { opacity: 0.18; }
-    .photo-slot-label { opacity: 0.4; }
+    .program-chip.is-active {
+      background: rgba(251,191,36,0.14);
+      color: var(--gold);
+      border-color: rgba(251,191,36,0.35);
+    }
+    .program-chip:hover { border-color: rgba(255,255,255,0.28); color: var(--tp); transform: translateY(-1px); }
+
+    .program-slider {
+      position: relative;
+      padding: 0 72px 18px;
+      margin-bottom: 18px;
+    }
+    .program-stage {
+      position: relative;
+      height: clamp(310px, 43vw, 470px);
+      overflow: hidden;
+    }
+    .program-card {
+      position: absolute;
+      inset: 10px auto 10px 50%;
+      width: min(62vw, 440px);
+      min-width: 250px;
+      max-width: 440px;
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 0;
+      overflow: hidden;
+      background: #0a0a0a;
+      box-shadow: 0 20px 56px rgba(0,0,0,0.42);
+      transform: translateX(-50%) scale(0.9);
+      opacity: 0;
+      filter: saturate(0.9);
+      pointer-events: none;
+      transition: transform 0.42s cubic-bezier(0.22, 0.8, 0.22, 1), opacity 0.32s ease, filter 0.3s ease;
+    }
+    .program-card.is-active {
+      transform: translateX(-50%) scale(1);
+      opacity: 1;
+      z-index: 4;
+      filter: saturate(1);
+      pointer-events: auto;
+    }
+    .program-card.is-prev {
+      transform: translateX(calc(-50% - min(30vw, 230px))) scale(0.89);
+      opacity: 0.72;
+      z-index: 3;
+      filter: saturate(0.86);
+    }
+    .program-card.is-next {
+      transform: translateX(calc(-50% + min(30vw, 230px))) scale(0.89);
+      opacity: 0.72;
+      z-index: 3;
+      filter: saturate(0.86);
+    }
+    .program-card.is-hidden {
+      transform: translateX(-50%) scale(0.82);
+      opacity: 0;
+      z-index: 1;
+    }
+
+    .program-card-media {
+      position: relative;
+      height: 56%;
+      min-height: 180px;
+      background: var(--card-bg, radial-gradient(circle at 20% 20%, rgba(251,191,36,0.16), #111 55%));
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+    .program-card-media::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(0,0,0,0.5), transparent 56%);
+      pointer-events: none;
+    }
+    .program-photo-note {
+      position: absolute;
+      left: 14px;
+      bottom: 12px;
+      z-index: 2;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 11px;
+      border-radius: 0;
+      border: 1px solid rgba(255,255,255,0.2);
+      background: rgba(0,0,0,0.38);
+      font-size: 9px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
+      color: rgba(250,250,250,0.86);
+    }
+
+    .program-card-body { padding: 18px 18px 20px; }
+    .program-card-num { display: block; font-size: 9px; font-weight: 700; letter-spacing: 0.22em; text-transform: uppercase; color: var(--ts); margin-bottom: 10px; }
+    .program-card-title { font-size: clamp(21px, 2.2vw, 30px); font-weight: 800; line-height: 1.05; letter-spacing: -0.02em; margin-bottom: 10px; }
+    .program-card-title em { color: var(--gold); font-style: normal; }
+    .program-card-desc { font-size: 13px; color: var(--ts); line-height: 1.62; }
+
+    .program-nav {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 42px; height: 42px;
+      border-radius: 0;
+      border: 1px solid rgba(255,255,255,0.22);
+      background: rgba(5,5,5,0.8);
+      color: var(--tp);
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer;
+      z-index: 6;
+      transition: border-color 0.2s, color 0.2s, background 0.2s, transform 0.2s;
+    }
+    .program-nav:hover {
+      border-color: rgba(251,191,36,0.5);
+      color: var(--gold);
+      background: rgba(0,0,0,0.94);
+    }
+    .program-nav:active { transform: translateY(-50%) scale(0.96); }
+    #programPrev { left: 16px; }
+    #programNext { right: 16px; }
+
+    .program-dots {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+    .program-dot {
+      width: 8px; height: 8px;
+      border-radius: 0;
+      border: none;
+      background: rgba(255,255,255,0.18);
+      padding: 0;
+      cursor: pointer;
+      transition: transform 0.2s, background 0.2s;
+    }
+    .program-dot.is-active { background: var(--gold); transform: scale(1.35); }
+
+    .event-list,
+    .ev-row,
+    .ev-photo,
     .ev-text {
-      padding: 40px 44px; display: flex; flex-direction: column; justify-content: center;
+      display: none !important;
     }
-    .ev-num { font-size: 9px; font-weight: 700; letter-spacing: 0.24em; color: var(--ts); text-transform: uppercase; margin-bottom: 16px; }
-    .ev-title { font-size: clamp(22px, 3vw, 34px); font-weight: 800; color: var(--tp); line-height: 1.05; margin-bottom: 14px; letter-spacing: -0.02em; }
-    .ev-title em { font-style: normal; color: var(--gold); }
-    .ev-desc { font-size: 14px; color: var(--ts); line-height: 1.7; max-width: 360px; }
 
     /* ── FOOTER ── */
     footer {
@@ -484,30 +668,86 @@
     /* ── RESPONSIVE ── */
     @media (max-width: 860px) {
       :root { --nav-h: 54px; }
-      nav { padding: 0 16px; }
-      .hero { padding: calc(var(--nav-h) + 32px) 20px 72px; }
-      .story { padding: calc(var(--nav-h) + 28px) 20px 56px; }
-      .counter-inner { padding: calc(var(--nav-h) + 24px) 20px 40px; }
-      .mpesa-panel-inner { padding: calc(var(--nav-h) + 24px) 20px 44px; }
-      .boards-panel-inner { padding: calc(var(--nav-h) + 16px) 16px 32px; }
+      nav { padding: var(--safe-top) 16px 0; }
+      .hero { padding: calc(var(--nav-offset) + 32px) 20px 72px; }
+      .story { padding: calc(var(--nav-offset) + 28px) 20px 56px; }
+      .counter-inner { padding: calc(var(--nav-offset) + 24px) 20px 40px; }
+      .mpesa-panel-inner { padding: calc(var(--nav-offset) + 24px) 20px 44px; }
+      .boards-panel-inner { padding: calc(var(--nav-offset) + 16px) 16px 32px; }
       .boards { grid-template-columns: 1fr; }
-      .program-inner { padding: calc(var(--nav-h) + 16px) 0 0; }
+      .program-inner { padding: calc(var(--nav-offset) + 16px) 0 0; }
       .program-head { padding: 0 16px; margin-bottom: 32px; }
-      .ev-row { grid-template-columns: 1fr; min-height: auto; }
-      .ev-row.rev { direction: ltr; }
-      .ev-photo { min-height: 180px; }
-      .photo-slot { border-right: none !important; border-left: none !important; border-bottom: 1px solid var(--border); }
-      .ev-text { padding: 24px 16px; }
+      .program-head p { max-width: 430px; }
+      .program-slider { padding: 0 12px 58px; }
+      .program-stage { height: clamp(340px, 72vw, 460px); }
+      .program-card { width: min(92vw, 420px); min-width: 230px; }
+      .program-card.is-prev {
+        transform: translateX(calc(-50% - min(38vw, 170px))) scale(0.85);
+        opacity: 0.46;
+      }
+      .program-card.is-next {
+        transform: translateX(calc(-50% + min(38vw, 170px))) scale(0.85);
+        opacity: 0.46;
+      }
+      .program-nav { top: auto; bottom: 4px; transform: none; }
+      .program-nav:active { transform: scale(0.96); }
+      #programPrev { left: calc(50% - 52px); }
+      #programNext { right: calc(50% - 52px); }
       footer { flex-direction: column; align-items: center; text-align: center; padding: 24px 16px; }
       .foot-right { text-align: center; }
       .nav-dots { display: none; }
       .countdown-strip { gap: 16px; padding: 12px 20px; }
     }
 
+    @media (max-width: 620px) {
+      .nav-btn .label-full { display: none; }
+      .nav-btn .label-short { display: inline; }
+      .story { padding: calc(var(--nav-offset) + 22px) 18px 46px; }
+      .story h2.story-main-title { font-size: clamp(28px, 10vw, 46px); margin-bottom: 20px; }
+      .story p.story-lead { line-height: 1.55; margin-bottom: 26px; }
+      .story .pull.story-quote { margin: 36px auto 24px; padding-left: 14px; }
+      .story p.story-closing { font-size: clamp(14px, 4.8vw, 17px); line-height: 1.6; }
+      .program-chips {
+        justify-content: flex-start;
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        padding: 0 10px 6px;
+        margin: 0 10px 14px;
+      }
+      .program-chips::-webkit-scrollbar { display: none; }
+      .program-chip { flex: 0 0 auto; padding: 8px 14px; }
+      .program-slider { padding: 0 4px 56px; }
+      .program-stage { height: clamp(320px, 95vw, 430px); }
+      .program-card {
+        width: min(94vw, 370px);
+        inset: 8px auto 8px 50%;
+      }
+      .program-card-body { padding: 16px 15px 17px; }
+      .program-card-title { font-size: clamp(19px, 6.3vw, 27px); }
+      .program-card-desc { font-size: 12px; line-height: 1.54; }
+      .program-card.is-prev,
+      .program-card.is-next { opacity: 0.24; }
+    }
+
     @media (max-width: 480px) {
+      .nav-brand svg { width: 24px; height: 24px; }
+      .nav-brand-text .t { font-size: 8px; letter-spacing: 0.18em; }
+      .nav-brand-text .b { font-size: 11px; letter-spacing: 0.1em; }
+      .nav-btn { padding: 8px 12px; font-size: 10px; letter-spacing: 0.06em; }
       .urgency-block { flex-direction: column; align-items: flex-start; gap: 14px; }
       .ub-stat { padding-right: 0; border-right: none; border-bottom: 1px solid rgba(239,68,68,0.15); padding-bottom: 12px; }
       .mpesa-box .mamt { flex-wrap: wrap; }
+    }
+
+    @media (max-width: 380px), (max-height: 700px) {
+      .story { padding-top: calc(var(--nav-offset) + 14px); }
+      .story h2.story-main-title { font-size: clamp(24px, 9vw, 40px); line-height: 1.02; }
+      .nav-btn { padding: 7px 9px; font-size: 9px; letter-spacing: 0.03em; }
+      .nav-btn svg { display: none; }
+      .program-stage { height: 350px; }
+      .program-nav { width: 38px; height: 38px; }
+      #programPrev { left: calc(50% - 48px); }
+      #programNext { right: calc(50% - 48px); }
     }
   </style>
 </head>
@@ -535,7 +775,8 @@
   <div class="nav-dots" id="navDots"></div>
 
   <button class="nav-btn" onclick="navTo(3)">
-    Be a Founder
+    <span class="label-full">Be a Founder</span>
+    <span class="label-short">Founder</span>
     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
   </button>
 </nav>
@@ -545,7 +786,7 @@
 
     <!-- ==================== PANEL 1: HERO ==================== -->
     <section class="panel">
-      <section class="hero">
+      <section class="hero reveal" style="--reveal-delay:40ms;">
         <div class="g g1"></div>
         <div class="g g2"></div>
         <div class="hero-bg-bird" aria-hidden="true">
@@ -590,7 +831,7 @@
         </div>
       </section>
 
-      <div class="countdown-strip">
+      <div class="countdown-strip reveal" style="--reveal-delay:120ms;">
         <span class="cd-label">April 25 is in</span>
         <div class="cd-units">
           <div class="cd-unit"><div class="cd-num" id="cdDays">00</div><div class="cd-name">Days</div></div>
@@ -605,26 +846,26 @@
     </section>
 
     <!-- ==================== PANEL 2: STORY ==================== -->
-    <section class="panel" style="display:flex;flex-direction:column;justify-content:center;align-items:center;background:radial-gradient(circle at center,#111,#000);">
-      <section class="story" style="max-width:800px;padding:40px;">
-        <span class="eyebrow" style="display:block;text-align:center;">Wach Kasipul</span>
-        <h2 style="text-align:center;font-size:clamp(40px,8vw,84px);">The talent was<br/>always <em>here.</em></h2>
+    <section class="panel panel-shared story-panel">
+      <section class="story story-wide reveal" style="--reveal-delay:40ms;">
+        <span class="eyebrow story-kicker">Wach Kasipul</span>
+        <h2 class="story-main-title">The talent was<br/>always <em>here.</em></h2>
 
-        <p style="text-align:center;font-size:clamp(16px,1.8vw,20px);line-height:1.6;color:var(--ts);max-width:600px;margin:0 auto 40px;">Fighters. Performers. Builders. Every one of them left to be seen — not because the gift wasn't real, but because no one had built the stage yet. For the first time, we are building it ourselves. Not imported. Not borrowed. Built by the people it was made for.</p>
+        <p class="story-lead">Fighters. Performers. Builders. Every one of them left to be seen — not because the gift wasn't real, but because no one had built the stage yet. For the first time, we are building it ourselves. Not imported. Not borrowed. Built by the people it was made for.</p>
 
-        <div class="pull" style="text-align:center;margin:60px auto;">"Ok warito. Wagero kendwa."
-          <span class="luo-seal" style="justify-content:center;margin-top:16px;">Mar jopiny. For jopiny. By jopiny.</span>
+        <div class="pull story-quote">"Ok warito. Wagero kendwa."
+          <span class="luo-seal story-seal">Mar jopiny. For jopiny. By jopiny.</span>
         </div>
 
-        <p style="text-align:center;font-size:clamp(15px,1.6vw,18px);color:var(--ts);">April 25, Agoro Sare. Add your name. Your ward. Your sentence. <strong>The founding record of Kasipul Rise belongs to the people who built it —</strong> not the ones who showed up after.</p>
+        <p class="story-closing">April 25, Agoro Sare. Add your name. Your ward. Your sentence. <strong>The founding record of Kasipul Rise belongs to the people who built it —</strong> not the ones who showed up after.</p>
       </section>
     </section>
 
 
     <!-- ==================== PANEL 3: FUND STATS + DEADLINE ==================== -->
-    <section class="panel" id="counter" style="background:#050505;">
+    <section class="panel panel-shared" id="counter" style="background:#050505;">
       <div class="counter-section">
-        <div class="counter-inner">
+        <div class="counter-inner reveal" style="--reveal-delay:40ms;">
 
           <div class="counter-top">
             <span class="eyebrow">Community Fund</span>
@@ -687,8 +928,8 @@
 
 
     <!-- ==================== PANEL 4: M-PESA CTA ==================== -->
-    <section class="panel" style="background:radial-gradient(circle at 50% 40%,rgba(251,191,36,0.05),#000 65%);">
-      <div class="mpesa-panel-inner">
+    <section class="panel panel-shared" style="background:radial-gradient(circle at 50% 40%,rgba(251,191,36,0.05),#000 65%);">
+      <div class="mpesa-panel-inner reveal" style="--reveal-delay:40ms;">
 
         <div style="margin-bottom:36px;">
           <span class="eyebrow" style="display:block;margin-bottom:14px;">Add Your Name to the Founding Record</span>
@@ -708,18 +949,18 @@
           <div class="confirm-flow">
             <div class="cf-step"><span class="cf-n">1</span><span>Contribute via M-Pesa to the number above. Any amount.</span></div>
             <div class="cf-step"><span class="cf-n">2</span><span>Use <strong>your name</strong> as the M-Pesa reference when sending.</span></div>
-            <div class="cf-step"><span class="cf-n">3</span><span>WhatsApp <strong>your name, your ward, and one sentence</strong> — why you built this. Your words go on the board alongside your name.</span></div>
+            <div class="cf-step"><span class="cf-n">3</span><span>WhatsApp <strong>your name, your ward, and one sentence</strong> — why you built this — to the Champions number <strong>(07XX XXX XXX)</strong>. Your words go on the board alongside your name.</span></div>
           </div>
           <p class="mn2">Entry on the day is <strong>KSh 200 at the gate</strong> — separate from this.</p>
         </div>
 
         <!-- WhatsApp share -->
         <div class="wa-share">
-          <a href="https://wa.me/?text=Nimeweka%20jina%20langu%20kama%20mmoja%20wa%201%2C000%20wajenzi%20wa%20Kasipul%20Rise%20Festival%20%E2%80%94%20April%2025%2C%20Agoro%20Sare.%20Kasipul%20inajijengea.%20Weka%20jina%20lako%3A%20kasipulrise.co.ke" target="_blank" rel="noopener" class="wa-btn">
+          <a href="https://wa.me/?text=With%20faith%2C%20dignity%2C%20and%20unity%2C%20we%20are%20building%20Kasipul%20Rise%20Festival%20together.%20Please%20add%20your%20name%20to%20the%20founding%20board%20here%3A%20https%3A%2F%2Fkasipul-rise-2026.web.app" target="_blank" rel="noopener" class="wa-btn">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.09.537 4.054 1.475 5.765L.057 23.617a.75.75 0 0 0 .922.922l5.852-1.418A11.945 11.945 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.75a9.744 9.744 0 0 1-4.98-1.365l-.356-.213-3.694.894.912-3.589-.233-.369A9.745 9.745 0 0 1 2.25 12c0-5.376 4.374-9.75 9.75-9.75s9.75 4.374 9.75 9.75-4.374 9.75-9.75 9.75z"/></svg>
             Share on WhatsApp
           </a>
-          <p class="wa-note">Share with someone from Kasipul who should be on this board.</p>
+          <p class="wa-note">Share with someone from Kasipul who should be on this board (Champions: 07XX XXX XXX).</p>
         </div>
 
       </div>
@@ -727,8 +968,8 @@
 
 
     <!-- ==================== PANEL 5: COMMUNITY BOARD ==================== -->
-    <section class="panel" style="background:radial-gradient(circle at 50% 0%,rgba(16,185,129,0.04),#000 60%);">
-      <div class="boards-panel-inner">
+    <section class="panel panel-shared" style="background:radial-gradient(circle at 50% 0%,rgba(16,185,129,0.04),#000 60%);">
+      <div class="boards-panel-inner reveal" style="--reveal-delay:40ms;">
 
         <div class="boards-panel-header">
           <span class="eyebrow" style="display:block;margin-bottom:12px;">Live — Updated in Real Time</span>
@@ -761,14 +1002,67 @@
 
 
     <!-- ==================== PANEL 6: PROGRAM + FOOTER ==================== -->
-    <section class="panel" id="program-slide">
-      <div class="program-inner">
+    <section class="panel panel-shared" id="program-slide">
+      <div class="program-inner reveal" style="--reveal-delay:40ms;">
 
         <div class="program-head">
           <span class="eyebrow">Program · April 25, 2026</span>
           <h2>One day.<br/><em>Many stages.</em></h2>
           <p>Three disciplines. All talent from Kasipul — no exceptions.</p>
         </div>
+
+        <div class="program-chips" id="programChips">
+          <button class="program-chip is-active" type="button" data-program-chip="0">Boxing</button>
+          <button class="program-chip" type="button" data-program-chip="1">Music &amp; Culture</button>
+          <button class="program-chip" type="button" data-program-chip="2">Deadlift</button>
+        </div>
+
+        <div class="program-slider" data-no-panel-swipe>
+          <button class="program-nav" id="programPrev" type="button" aria-label="Previous program item">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+          </button>
+
+          <div class="program-stage" id="programStage">
+            <article class="program-card is-active" data-program-card="0" style="--card-bg:linear-gradient(135deg,#0f172a 0%,#1d4ed8 45%,#38bdf8 100%);">
+              <div class="program-card-media">
+                <div class="program-photo-note">Add boxing photo</div>
+              </div>
+              <div class="program-card-body">
+                <span class="program-card-num">01 · Boxing</span>
+                <h3 class="program-card-title">Boxing<br/><em>Tournament</em></h3>
+                <p class="program-card-desc">Inter-club elimination: Kasipul vs Homa Bay. Real bouts, real stakes. The heavyweight final closes the day.</p>
+              </div>
+            </article>
+
+            <article class="program-card is-next" data-program-card="1" style="--card-bg:linear-gradient(135deg,#111827 0%,#6d28d9 45%,#ec4899 100%);">
+              <div class="program-card-media">
+                <div class="program-photo-note">Add performance photo</div>
+              </div>
+              <div class="program-card-body">
+                <span class="program-card-num">02 · Music &amp; Culture</span>
+                <h3 class="program-card-title">Live<br/><em>Performances</em></h3>
+                <p class="program-card-desc">Music, spoken word and dance. Every performer is introduced by name and village. Nothing imported.</p>
+              </div>
+            </article>
+
+            <article class="program-card is-prev" data-program-card="2" style="--card-bg:linear-gradient(135deg,#052e16 0%,#15803d 45%,#fbbf24 100%);">
+              <div class="program-card-media">
+                <div class="program-photo-note">Add deadlift photo</div>
+              </div>
+              <div class="program-card-body">
+                <span class="program-card-num">03 · Strength</span>
+                <h3 class="program-card-title">Deadlift<br/><em>Showcase</em></h3>
+                <p class="program-card-desc">Kasipul's strength made undeniable. Jeff and the crowd count every lift together.</p>
+              </div>
+            </article>
+          </div>
+
+          <button class="program-nav" id="programNext" type="button" aria-label="Next program item">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+          </button>
+        </div>
+
+        <div class="program-dots" id="programDots" aria-label="Program slides"></div>
 
         <div class="event-list">
 
@@ -870,12 +1164,26 @@
   const panels = Array.from(document.querySelectorAll('.panel'));
   let cur = 0;
 
+  function getPanelState(panel) {
+    const scrollable = panel.scrollHeight > panel.clientHeight + 2;
+    const atBottom = panel.scrollTop + panel.clientHeight >= panel.scrollHeight - 4;
+    const atTop = panel.scrollTop <= 4;
+    return { scrollable: scrollable, atBottom: atBottom, atTop: atTop };
+  }
+
+  function updateActivePanel() {
+    panels.forEach(function(panel, i) {
+      panel.classList.toggle('is-active', i === cur);
+    });
+  }
+
   function navTo(n) {
     n = Math.max(0, Math.min(n, TOTAL - 1));
     if (n === cur) return;
     cur = n;
     track.style.transform = 'translateX(' + (-cur * 100) + 'vw)';
     updateDots();
+    updateActivePanel();
   }
   window.navTo = navTo; // expose for inline onclick
 
@@ -891,15 +1199,35 @@
   function updateDots() {
     dotsEl.querySelectorAll('.nd').forEach((d, i) => d.classList.toggle('active', i === cur));
   }
+  function parsePanelToken(token) {
+    if (!token) return null;
+    var map = { hero: 0, story: 1, counter: 2, mpesa: 3, leaderboard: 4, program: 5 };
+    var key = String(token).toLowerCase().trim();
+    if (Object.prototype.hasOwnProperty.call(map, key)) return map[key];
+    var maybeNum = parseInt(key, 10);
+    if (!Number.isNaN(maybeNum)) return Math.max(0, Math.min(TOTAL - 1, maybeNum - 1));
+    return null;
+  }
+  var qpPanel = parsePanelToken(new URLSearchParams(window.location.search).get('panel'));
+  var hashPanel = window.location.hash.indexOf('#panel=') === 0
+    ? parsePanelToken(window.location.hash.slice(7))
+    : null;
+  var startPanel = qpPanel !== null ? qpPanel : hashPanel;
+  if (startPanel !== null) {
+    cur = startPanel;
+    track.style.transform = 'translateX(' + (-cur * 100) + 'vw)';
+  }
+  updateDots();
+  updateActivePanel();
 
   // Wheel — respect panel's own vertical scroll first
   let wTimer = null;
   window.addEventListener('wheel', function(e) {
     const p = panels[cur];
-    const scrollable = p.scrollHeight > p.clientHeight + 2;
-    if (scrollable) {
-      const atBottom = p.scrollTop + p.clientHeight >= p.scrollHeight - 4;
-      const atTop    = p.scrollTop <= 4;
+    const panelState = getPanelState(p);
+    if (panelState.scrollable) {
+      const atBottom = panelState.atBottom;
+      const atTop = panelState.atTop;
       if (e.deltaY > 0 && !atBottom) return;
       if (e.deltaY < 0 && !atTop)    return;
     }
@@ -909,16 +1237,42 @@
     wTimer = setTimeout(function() { wTimer = null; }, 600);
   }, { passive: false });
 
-  // Touch swipe — horizontal only
+  // Touch swipe: keep normal scroll and move panels only at boundaries
   var tx0 = 0, ty0 = 0;
+  var touchAtTop = true, touchAtBottom = true;
+  var suppressPanelSwipe = false;
+  var TOUCH_NAV_MIN = 64;
+  var EDGE_MIN = 36;
+  var EDGE_RATIO = 0.08;
   window.addEventListener('touchstart', function(e) {
+    var t = e.target;
+    suppressPanelSwipe = !!(t && t.closest && t.closest('[data-no-panel-swipe]'));
+    if (suppressPanelSwipe) return;
+    var panelState = getPanelState(panels[cur]);
+    touchAtTop = !panelState.scrollable || panelState.atTop;
+    touchAtBottom = !panelState.scrollable || panelState.atBottom;
     tx0 = e.touches[0].clientX;
     ty0 = e.touches[0].clientY;
   }, { passive: true });
   window.addEventListener('touchend', function(e) {
+    if (suppressPanelSwipe) {
+      suppressPanelSwipe = false;
+      return;
+    }
     var dx = e.changedTouches[0].clientX - tx0;
     var dy = e.changedTouches[0].clientY - ty0;
-    if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 44) {
+    var ax = Math.abs(dx);
+    var ay = Math.abs(dy);
+    if (ay > ax * 1.2 && ay > TOUCH_NAV_MIN) {
+      var p = panels[cur];
+      var edge = Math.max(EDGE_MIN, Math.round(p.clientHeight * EDGE_RATIO));
+      var nearBottom = p.scrollTop + p.clientHeight >= p.scrollHeight - edge;
+      var nearTop = p.scrollTop <= edge;
+      if (dy < 0 && (touchAtBottom || nearBottom)) navTo(cur + 1);
+      if (dy > 0 && (touchAtTop || nearTop)) navTo(cur - 1);
+      return;
+    }
+    if (ax > ay && ax > 44) {
       navTo(cur + (dx < 0 ? 1 : -1));
     }
   }, { passive: true });
@@ -954,6 +1308,75 @@
       c.classList.add('on');
     });
   });
+
+  // Program carousel cards
+  (function initProgramCarousel() {
+    var stage = document.getElementById('programStage');
+    var prev = document.getElementById('programPrev');
+    var next = document.getElementById('programNext');
+    var dotsHost = document.getElementById('programDots');
+    if (!stage || !prev || !next || !dotsHost) return;
+
+    var cards = Array.from(stage.querySelectorAll('.program-card'));
+    var chips = Array.from(document.querySelectorAll('[data-program-chip]'));
+    if (!cards.length) return;
+
+    var idx = 0;
+    var dots = cards.map(function(_, i) {
+      var dot = document.createElement('button');
+      dot.type = 'button';
+      dot.className = 'program-dot' + (i === 0 ? ' is-active' : '');
+      dot.setAttribute('aria-label', 'Program slide ' + (i + 1));
+      dot.addEventListener('click', function() { go(i); });
+      dotsHost.appendChild(dot);
+      return dot;
+    });
+
+    function wrap(n) { return (n + cards.length) % cards.length; }
+
+    function paint() {
+      cards.forEach(function(card, i) {
+        card.classList.remove('is-active', 'is-prev', 'is-next', 'is-hidden');
+        if (i === idx) card.classList.add('is-active');
+        else if (i === wrap(idx - 1)) card.classList.add('is-prev');
+        else if (i === wrap(idx + 1)) card.classList.add('is-next');
+        else card.classList.add('is-hidden');
+        card.setAttribute('aria-hidden', i === idx ? 'false' : 'true');
+      });
+      chips.forEach(function(chip, i) { chip.classList.toggle('is-active', i === idx); });
+      dots.forEach(function(dot, i) { dot.classList.toggle('is-active', i === idx); });
+    }
+
+    function go(n) {
+      idx = wrap(n);
+      paint();
+    }
+
+    prev.addEventListener('click', function() { go(idx - 1); });
+    next.addEventListener('click', function() { go(idx + 1); });
+
+    chips.forEach(function(chip) {
+      chip.addEventListener('click', function() {
+        var n = parseInt(chip.getAttribute('data-program-chip') || '0', 10);
+        if (!Number.isNaN(n)) go(n);
+      });
+    });
+
+    var sx = 0, sy = 0;
+    stage.addEventListener('touchstart', function(e) {
+      sx = e.touches[0].clientX;
+      sy = e.touches[0].clientY;
+    }, { passive: true });
+    stage.addEventListener('touchend', function(e) {
+      var dx = e.changedTouches[0].clientX - sx;
+      var dy = e.changedTouches[0].clientY - sy;
+      if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 40) {
+        go(idx + (dx < 0 ? 1 : -1));
+      }
+    }, { passive: true });
+
+    paint();
+  })();
 </script>
 
 <!-- Firebase SDK -->

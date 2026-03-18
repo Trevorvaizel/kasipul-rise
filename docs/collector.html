@@ -222,6 +222,36 @@
     .mpesa-card-number { font-size: 20px; font-weight: 800; color: var(--gold); letter-spacing: 0.04em; }
     .mpesa-card-hint { font-size: 11px; color: var(--ts); margin-top: 3px; }
 
+    .quick-links {
+      margin: 12px 20px 0;
+      padding: 12px 14px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      background: var(--s1);
+    }
+    .quick-links-label {
+      font-size: 9px; font-weight: 700; letter-spacing: 0.18em;
+      color: var(--ts); text-transform: uppercase; margin-bottom: 10px;
+    }
+    .quick-links-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 8px;
+    }
+    .quick-link-btn {
+      display: inline-flex; align-items: center; justify-content: center;
+      padding: 10px 8px;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      text-decoration: none;
+      color: var(--tp);
+      font-size: 10px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase;
+      background: rgba(255,255,255,0.01);
+      transition: border-color 0.2s, color 0.2s, transform 0.15s;
+    }
+    .quick-link-btn:hover { border-color: rgba(251,191,36,0.4); color: var(--gold); }
+    .quick-link-btn:active { transform: scale(0.98); }
+
     /* Live boards */
     .board-wrap { margin: 16px 20px; border: 1px solid var(--border); border-radius: 6px; overflow: hidden; }
     .board-head {
@@ -268,6 +298,598 @@
       .app-body { grid-template-columns: 1fr; overflow: visible; }
       .col-left { border-right: none; border-bottom: 1px solid var(--border); overflow: visible; }
       .col-right { overflow: visible; }
+      .quick-links-grid { grid-template-columns: 1fr; }
+    }
+
+    /* UI refresh overrides */
+    :root {
+      --bg0: #040506;
+      --bg1: #0b0d10;
+      --bg2: #12161b;
+      --card: rgba(13, 16, 21, 0.82);
+      --card-soft: rgba(16, 20, 26, 0.68);
+      --line: rgba(255, 255, 255, 0.08);
+      --line-strong: rgba(251, 191, 36, 0.24);
+      --text-main: #f4f6f8;
+      --text-muted: #8f97a4;
+    }
+
+    html, body {
+      background:
+        radial-gradient(1100px 540px at 8% -10%, rgba(251, 191, 36, 0.12), transparent 58%),
+        radial-gradient(820px 460px at 104% 2%, rgba(16, 185, 129, 0.1), transparent 58%),
+        linear-gradient(180deg, #07090c 0%, #040506 100%);
+      color: var(--text-main);
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background-image:
+        linear-gradient(to right, rgba(255, 255, 255, 0.015) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(255, 255, 255, 0.015) 1px, transparent 1px);
+      background-size: 44px 44px;
+      mask-image: radial-gradient(circle at center, black 22%, transparent 84%);
+      opacity: 0.55;
+      z-index: 0;
+    }
+
+    #app {
+      position: relative;
+      z-index: 1;
+      width: min(1520px, 100%);
+      margin: 0 auto;
+      padding: 16px;
+      gap: 12px;
+    }
+
+    #loginScreen {
+      background:
+        radial-gradient(circle at 20% -10%, rgba(251, 191, 36, 0.18), transparent 45%),
+        radial-gradient(circle at 85% 2%, rgba(16, 185, 129, 0.12), transparent 38%),
+        linear-gradient(180deg, #07090c 0%, #040506 100%);
+    }
+
+    .login-card {
+      border-radius: 14px;
+      border-color: var(--line);
+      background: linear-gradient(180deg, rgba(14, 18, 23, 0.9), rgba(10, 13, 17, 0.86));
+      box-shadow: 0 18px 46px rgba(0, 0, 0, 0.36);
+    }
+
+    .field input, .field select {
+      border-radius: 10px;
+      background: linear-gradient(180deg, #171c23 0%, #141921 100%);
+      border-color: rgba(255, 255, 255, 0.09);
+      color: var(--text-main);
+    }
+
+    .field input::placeholder {
+      color: #637082;
+    }
+
+    .btn-primary, .btn-submit {
+      border-radius: 10px;
+      box-shadow: 0 10px 24px rgba(251, 191, 36, 0.2);
+    }
+
+    .offline-badge {
+      border: 1px solid rgba(239, 68, 68, 0.28);
+      border-radius: 10px;
+      margin: 0 0 2px;
+      width: fit-content;
+      align-self: center;
+      padding-inline: 14px;
+      background: rgba(48, 12, 12, 0.54);
+    }
+
+    .app-header {
+      padding: 14px 18px;
+      border-radius: 14px;
+      border: 1px solid var(--line);
+      background: linear-gradient(180deg, rgba(20, 24, 30, 0.88), rgba(12, 15, 20, 0.85));
+      backdrop-filter: blur(14px);
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.24);
+    }
+
+    .header-brand {
+      font-size: 28px;
+      line-height: 1;
+      letter-spacing: 0.04em;
+      color: #ffd25f;
+      text-shadow: 0 0 28px rgba(251, 191, 36, 0.16);
+    }
+
+    .header-eyebrow {
+      font-size: 10px;
+      letter-spacing: 0.32em;
+      color: #8f97a4;
+    }
+
+    .header-collector {
+      font-size: 14px;
+      color: #a7afbb;
+    }
+
+    .logout-btn {
+      color: #c3c9d2;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      border-color: rgba(255, 255, 255, 0.13);
+      background: rgba(255, 255, 255, 0.02);
+      border-radius: 10px;
+      padding: 10px 14px;
+    }
+
+    .logout-btn:hover {
+      color: #fff;
+      border-color: rgba(251, 191, 36, 0.38);
+      background: rgba(251, 191, 36, 0.08);
+    }
+
+    .stats-bar {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+      border: 0;
+      background: transparent;
+    }
+
+    .stat-item {
+      align-items: flex-start;
+      gap: 6px;
+      padding: 16px 16px 14px;
+      border-radius: 14px;
+      border: 1px solid var(--line);
+      background: linear-gradient(180deg, rgba(20, 24, 30, 0.82), rgba(14, 17, 22, 0.66));
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.02);
+    }
+
+    .stat-num {
+      font-size: clamp(26px, 2.2vw, 34px);
+      line-height: 1.05;
+      letter-spacing: 0.01em;
+    }
+
+    .stat-lbl {
+      font-size: 10px;
+      letter-spacing: 0.18em;
+      color: var(--text-muted);
+    }
+
+    .app-body {
+      grid-template-columns: minmax(350px, 430px) minmax(0, 1fr);
+      gap: 12px;
+      overflow: visible;
+    }
+
+    .col-left, .col-right {
+      border-radius: 16px;
+      border: 1px solid var(--line);
+      background: linear-gradient(180deg, rgba(15, 19, 25, 0.8), rgba(10, 13, 18, 0.74));
+      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.2);
+      overflow-y: auto;
+      max-height: calc(100vh - 222px);
+    }
+
+    .col-left {
+      border-right: 1px solid var(--line);
+    }
+
+    .form-section {
+      padding: 24px 22px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .session-section {
+      padding: 0 22px 22px;
+    }
+
+    .section-label {
+      color: #8f97a4;
+      margin-bottom: 16px;
+    }
+
+    .section-label::after {
+      background: linear-gradient(to right, rgba(255, 255, 255, 0.08), rgba(251, 191, 36, 0.15));
+    }
+
+    .entry-form {
+      gap: 12px;
+    }
+
+    .queue-notice {
+      margin: 0 22px 14px;
+      border-radius: 10px;
+      background: rgba(251, 191, 36, 0.08);
+      border-color: rgba(251, 191, 36, 0.24);
+    }
+
+    .c-av, .contrib-av {
+      background: linear-gradient(180deg, #171b22 0%, #11161d 100%);
+      border-color: rgba(255, 255, 255, 0.12);
+    }
+
+    .c-name, .contrib-name, .wr-name {
+      color: #f8fafc;
+    }
+
+    .c-ward, .contrib-ward, .mpesa-card-hint {
+      color: #9098a5;
+    }
+
+    .col-right {
+      padding-bottom: 12px;
+      background:
+        radial-gradient(420px 180px at 10% -20%, rgba(251, 191, 36, 0.08), transparent 72%),
+        linear-gradient(180deg, rgba(15, 19, 25, 0.82), rgba(10, 13, 18, 0.78));
+    }
+
+    .mpesa-card, .quick-links, .board-wrap {
+      margin-left: 14px;
+      margin-right: 14px;
+      border-radius: 14px;
+      border-color: var(--line);
+      background: var(--card-soft);
+      backdrop-filter: blur(8px);
+      overflow: hidden;
+    }
+
+    .mpesa-card {
+      margin-top: 14px;
+      padding: 16px 18px;
+      border-color: var(--line-strong);
+      background:
+        linear-gradient(102deg, rgba(251, 191, 36, 0.1), rgba(251, 191, 36, 0.03) 42%, rgba(10, 13, 18, 0.8) 100%);
+    }
+
+    .mpesa-card-icon {
+      width: 42px;
+      height: 42px;
+      background: rgba(10, 12, 16, 0.54);
+      border-color: rgba(255, 255, 255, 0.14);
+    }
+
+    .mpesa-card-label {
+      color: #34d399;
+      font-size: 10px;
+      letter-spacing: 0.24em;
+    }
+
+    .mpesa-card-number {
+      font-size: clamp(28px, 2.5vw, 34px);
+      line-height: 1;
+      margin-top: 2px;
+      letter-spacing: 0.02em;
+    }
+
+    .quick-links {
+      margin-top: 10px;
+      padding: 14px;
+      background: var(--card);
+    }
+
+    .quick-links-label {
+      font-size: 10px;
+      letter-spacing: 0.22em;
+      color: #8f97a4;
+      margin-bottom: 12px;
+    }
+
+    .quick-link-btn {
+      padding: 12px 8px;
+      border-radius: 10px;
+      border-color: rgba(255, 255, 255, 0.14);
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.01));
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      color: #e6eaf0;
+    }
+
+    .quick-link-btn:hover {
+      transform: translateY(-1px);
+      border-color: rgba(251, 191, 36, 0.54);
+      color: #ffd871;
+      box-shadow: 0 8px 18px rgba(0, 0, 0, 0.2);
+    }
+
+    .board-wrap {
+      margin-top: 14px;
+      margin-bottom: 0;
+      background: var(--card);
+    }
+
+    .board-head {
+      padding: 13px 16px;
+      background: rgba(255, 255, 255, 0.02);
+      border-bottom-color: rgba(255, 255, 255, 0.08);
+    }
+
+    .board-head h3 {
+      font-size: 11px;
+      letter-spacing: 0.2em;
+      color: #9aa2af;
+    }
+
+    .ward-row, .contrib-row {
+      padding-left: 16px;
+      padding-right: 16px;
+    }
+
+    .ward-row {
+      min-height: 50px;
+      border-bottom-color: rgba(255, 255, 255, 0.05);
+    }
+
+    .wr-rank {
+      color: #a0a8b4;
+      width: 20px;
+      font-size: 12px;
+    }
+
+    .wr-bt {
+      height: 5px;
+      border-radius: 999px;
+    }
+
+    .wr-bf {
+      border-radius: 999px;
+    }
+
+    .contrib-row {
+      min-height: 56px;
+      border-bottom-color: rgba(255, 255, 255, 0.05);
+      transition: background 0.2s ease;
+    }
+
+    .contrib-row:hover {
+      background: rgba(255, 255, 255, 0.015);
+    }
+
+    .contrib-quote {
+      color: #808a99;
+    }
+
+    .concern-tabs {
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .concern-tablist {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 8px;
+      padding: 4px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    .concern-tab {
+      appearance: none;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      background: rgba(255, 255, 255, 0.02);
+      color: #c3c9d2;
+      border-radius: 9px;
+      min-height: 40px;
+      padding: 8px 10px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: color 0.2s, border-color 0.2s, background 0.2s;
+    }
+
+    .concern-tab:hover {
+      color: #f5f8fb;
+      border-color: rgba(255, 255, 255, 0.25);
+    }
+
+    .concern-tab.is-active {
+      color: #0a0a0a;
+      border-color: rgba(251, 191, 36, 0.9);
+      background: linear-gradient(180deg, #ffd44e 0%, #fbbf24 100%);
+    }
+
+    .concern-tab:focus-visible {
+      outline: 2px solid rgba(52, 211, 153, 0.6);
+      outline-offset: 1px;
+    }
+
+    .tab-panel {
+      display: none;
+      animation: panelIn 0.24s ease;
+    }
+
+    .tab-panel.is-active {
+      display: block;
+    }
+
+    @keyframes panelIn {
+      from {
+        opacity: 0;
+        transform: translateY(4px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .tab-panel .mpesa-card,
+    .tab-panel .quick-links,
+    .tab-panel .board-wrap {
+      margin-left: 0;
+      margin-right: 0;
+    }
+
+    .tab-panel .quick-links {
+      margin-top: 12px;
+    }
+
+    .tab-panel .board-wrap {
+      margin-top: 0;
+      margin-bottom: 0;
+    }
+
+    /* Swiss geometry pass: flatter shapes, stricter grid */
+    .login-card,
+    .app-header,
+    .stat-item,
+    .col-left,
+    .col-right,
+    .form-section,
+    .session-section,
+    .mpesa-card,
+    .quick-links,
+    .board-wrap,
+    .queue-notice,
+    .concern-tablist,
+    .concern-tab,
+    .btn-primary,
+    .btn-submit,
+    .logout-btn,
+    .quick-link-btn {
+      border-radius: 4px !important;
+    }
+
+    .field input,
+    .field select {
+      border-radius: 3px !important;
+    }
+
+    .c-av,
+    .contrib-av {
+      border-radius: 999px;
+    }
+
+    .app-header,
+    .stat-item,
+    .col-left,
+    .col-right,
+    .login-card,
+    .btn-primary,
+    .btn-submit,
+    .quick-link-btn {
+      box-shadow: none;
+    }
+
+    .concern-tablist {
+      padding: 3px;
+      gap: 6px;
+    }
+
+    .concern-tab {
+      min-height: 36px;
+      letter-spacing: 0.1em;
+    }
+
+    @media (max-width: 1220px) {
+      #app {
+        padding: 12px;
+      }
+      .app-body {
+        grid-template-columns: minmax(320px, 390px) minmax(0, 1fr);
+      }
+      .header-brand {
+        font-size: 24px;
+      }
+    }
+
+    @media (max-width: 980px) {
+      .app-body {
+        grid-template-columns: 1fr;
+      }
+      .col-left, .col-right {
+        max-height: none;
+      }
+      .quick-links-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 760px) {
+      #app {
+        padding: 10px;
+        gap: 10px;
+      }
+      .app-header {
+        flex-wrap: wrap;
+        align-items: flex-start;
+      }
+      .header-left {
+        width: 100%;
+      }
+      .header-sep {
+        display: none;
+      }
+      .header-brand {
+        font-size: 22px;
+      }
+      .header-collector {
+        font-size: 12px;
+      }
+      .logout-btn {
+        width: 100%;
+      }
+      .stats-bar {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 6px;
+      }
+      .stat-item {
+        align-items: center;
+        min-height: 66px;
+        padding: 10px 6px 8px;
+        gap: 4px;
+      }
+      .stat-num {
+        font-size: clamp(20px, 6vw, 25px);
+      }
+      .stat-lbl {
+        font-size: 8px;
+        letter-spacing: 0.12em;
+        text-align: center;
+        line-height: 1.2;
+      }
+      .form-section, .session-section {
+        padding-left: 14px;
+        padding-right: 14px;
+      }
+      .queue-notice {
+        margin-left: 14px;
+        margin-right: 14px;
+      }
+      .row2-grid {
+        grid-template-columns: 1fr;
+      }
+      .quick-links-grid {
+        grid-template-columns: 1fr;
+      }
+      .concern-tablist {
+        grid-template-columns: 1fr;
+      }
+      .mpesa-card-number {
+        font-size: 24px;
+      }
+    }
+
+    @media (max-width: 360px) {
+      .stat-item {
+        min-height: 62px;
+        padding: 9px 5px 7px;
+      }
+      .stat-num {
+        font-size: 19px;
+      }
+      .stat-lbl {
+        font-size: 7px;
+      }
     }
   </style>
 </head>
@@ -402,6 +1024,15 @@
         </div>
       </div>
 
+      <div class="quick-links">
+        <div class="quick-links-label">Quick Open (Public View)</div>
+        <div class="quick-links-grid">
+          <a class="quick-link-btn" href="/kasipul-rise-festival-april-2026.html?panel=counter" target="_blank" rel="noopener">Counter</a>
+          <a class="quick-link-btn" href="/kasipul-rise-festival-april-2026.html?panel=leaderboard" target="_blank" rel="noopener">Leaderboard</a>
+          <a class="quick-link-btn" href="/kasipul-rise-festival-april-2026.html?panel=mpesa" target="_blank" rel="noopener">M-Pesa</a>
+        </div>
+      </div>
+
       <!-- Ward leaderboard -->
       <div class="board-wrap">
         <div class="board-head">
@@ -455,6 +1086,98 @@
 
   window.addEventListener('online',  () => { document.getElementById('offlineBadge').classList.remove('visible'); });
   window.addEventListener('offline', () => { document.getElementById('offlineBadge').classList.add('visible'); });
+
+  function setupRightTabs() {
+    if (document.getElementById('rightTabs')) return;
+    const col = document.querySelector('.col-right');
+    if (!col) return;
+
+    const mpesa = col.querySelector('.mpesa-card');
+    const quick = col.querySelector('.quick-links');
+    const boards = Array.from(col.querySelectorAll('.board-wrap'));
+    if (!mpesa || !quick || boards.length < 2) return;
+
+    const shell = document.createElement('div');
+    shell.className = 'concern-tabs';
+    shell.id = 'rightTabs';
+
+    const list = document.createElement('div');
+    list.className = 'concern-tablist';
+    list.setAttribute('role', 'tablist');
+    list.setAttribute('aria-label', 'Collector dashboard sections');
+
+    const tabSpecs = [
+      { key: 'action', label: 'Action Desk' },
+      { key: 'wards', label: 'Ward Board' },
+      { key: 'recent', label: 'Recent' },
+    ];
+
+    const makeTab = (spec, active) => {
+      const btn = document.createElement('button');
+      btn.className = `concern-tab${active ? ' is-active' : ''}`;
+      btn.type = 'button';
+      btn.dataset.tab = spec.key;
+      btn.textContent = spec.label;
+      btn.setAttribute('role', 'tab');
+      btn.setAttribute('aria-selected', active ? 'true' : 'false');
+      btn.setAttribute('tabindex', active ? '0' : '-1');
+      return btn;
+    };
+
+    const tabs = tabSpecs.map((spec, i) => makeTab(spec, i === 0));
+    tabs.forEach(tab => list.appendChild(tab));
+
+    const panelAction = document.createElement('section');
+    panelAction.className = 'tab-panel is-active';
+    panelAction.dataset.panel = 'action';
+    panelAction.appendChild(mpesa);
+    panelAction.appendChild(quick);
+
+    const panelWards = document.createElement('section');
+    panelWards.className = 'tab-panel';
+    panelWards.dataset.panel = 'wards';
+    panelWards.appendChild(boards[0]);
+
+    const panelRecent = document.createElement('section');
+    panelRecent.className = 'tab-panel';
+    panelRecent.dataset.panel = 'recent';
+    panelRecent.appendChild(boards[1]);
+
+    shell.appendChild(list);
+    shell.appendChild(panelAction);
+    shell.appendChild(panelWards);
+    shell.appendChild(panelRecent);
+
+    col.innerHTML = '';
+    col.appendChild(shell);
+
+    const allTabs = Array.from(shell.querySelectorAll('.concern-tab'));
+    const allPanels = Array.from(shell.querySelectorAll('.tab-panel'));
+
+    function activateTab(key) {
+      allTabs.forEach(tab => {
+        const active = tab.dataset.tab === key;
+        tab.classList.toggle('is-active', active);
+        tab.setAttribute('aria-selected', active ? 'true' : 'false');
+        tab.setAttribute('tabindex', active ? '0' : '-1');
+      });
+      allPanels.forEach(panel => panel.classList.toggle('is-active', panel.dataset.panel === key));
+    }
+
+    allTabs.forEach((tab, index) => {
+      tab.addEventListener('click', () => activateTab(tab.dataset.tab));
+      tab.addEventListener('keydown', (event) => {
+        if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') return;
+        event.preventDefault();
+        const direction = event.key === 'ArrowRight' ? 1 : -1;
+        const nextIndex = (index + direction + allTabs.length) % allTabs.length;
+        allTabs[nextIndex].focus();
+        activateTab(allTabs[nextIndex].dataset.tab);
+      });
+    });
+  }
+
+  setupRightTabs();
 
   // ── Auth
   onAuthStateChanged(auth, user => {

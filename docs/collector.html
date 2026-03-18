@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+  <title>Kasipul Rise — Collector Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700;9..40,800&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --gold:   #fbbf24;
+      --green:  #10b981;
+      --teal:   #34d399;
+      --red:    #ef4444;
+      --s0:     #000;
+      --s1:     #0a0a0a;
+      --s2:     #111;
+      --s3:     #1a1a1a;
+      --tp:     #fafafa;
+      --ts:     #71717a;
+      --tt:     #3f3f46;
+      --border: rgba(255,255,255,0.07);
+      --borderg: rgba(251,191,36,0.15);
+    }
+
+    html, body {
+      height: 100%; font-family: 'DM Sans', sans-serif;
+      background: var(--s0); color: var(--tp);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── LOGIN ── */
+    #loginScreen {
+      min-height: 100vh; display: flex; flex-direction: column;
+      align-items: center; justify-content: center; padding: 24px;
+      background: radial-gradient(circle at 50% 30%, rgba(251,191,36,0.04), #000 60%);
+    }
+    .login-brand { text-align: center; margin-bottom: 40px; }
+    .login-brand-eyebrow { font-size: 10px; font-weight: 700; letter-spacing: 0.28em; color: var(--ts); text-transform: uppercase; margin-bottom: 8px; }
+    .login-brand-name { font-size: 32px; font-weight: 800; color: var(--gold); letter-spacing: 0.06em; }
+    .login-brand-sub { font-size: 12px; color: var(--ts); margin-top: 4px; letter-spacing: 0.06em; }
+
+    .login-card {
+      width: 100%; max-width: 360px;
+      background: var(--s2); border: 1px solid var(--border);
+      border-radius: 6px; padding: 32px 28px;
+      display: flex; flex-direction: column; gap: 16px;
+    }
+    .login-card h2 { font-size: 17px; font-weight: 700; margin-bottom: 4px; }
+
+    .field { display: flex; flex-direction: column; gap: 6px; }
+    .field label { font-size: 10px; font-weight: 700; letter-spacing: 0.18em; color: var(--ts); text-transform: uppercase; }
+    .field input, .field select {
+      padding: 13px 14px; background: var(--s3); border: 1px solid var(--border);
+      border-radius: 5px; color: var(--tp); font-family: 'DM Sans', sans-serif;
+      font-size: 16px; outline: none; transition: border-color 0.2s;
+      -webkit-appearance: none; appearance: none;
+    }
+    .field input::placeholder { color: var(--tt); }
+    .field input:focus, .field select:focus { border-color: rgba(251,191,36,0.4); }
+    .field select option { background: var(--s2); }
+
+    #loginError {
+      font-size: 13px; color: var(--red);
+      background: rgba(239,68,68,0.08); border: 1px solid rgba(239,68,68,0.2);
+      border-radius: 5px; padding: 10px 12px; display: none;
+    }
+    .btn-primary {
+      padding: 15px; background: var(--gold); color: #000;
+      border: none; border-radius: 5px; font-family: 'DM Sans', sans-serif;
+      font-size: 14px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase;
+      cursor: pointer; width: 100%; transition: background 0.2s, transform 0.15s;
+    }
+    .btn-primary:active { transform: scale(0.98); }
+    .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    /* ── SUCCESS FLASH ── */
+    .success-flash {
+      position: fixed; top: 0; left: 0; right: 0; padding: 16px 20px;
+      background: var(--green); color: #000; font-size: 15px; font-weight: 700;
+      text-align: center; z-index: 999;
+      transform: translateY(-100%); transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1);
+    }
+    .success-flash.show { transform: translateY(0); }
+
+    /* ── OFFLINE ── */
+    .offline-badge {
+      display: none; align-items: center; gap: 6px;
+      padding: 8px 16px; background: rgba(239,68,68,0.12);
+      border-bottom: 1px solid rgba(239,68,68,0.2);
+      font-size: 12px; font-weight: 600; color: #f87171; justify-content: center;
+    }
+    .offline-badge.visible { display: flex; }
+
+    /* ── MAIN APP ── */
+    #app { display: none; min-height: 100vh; flex-direction: column; }
+
+    /* Header */
+    .app-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 14px 24px;
+      background: var(--s2); border-bottom: 1px solid var(--border);
+      flex-shrink: 0; gap: 16px;
+    }
+    .header-left { display: flex; align-items: center; gap: 14px; }
+    .header-logo { display: flex; flex-direction: column; gap: 1px; }
+    .header-eyebrow { font-size: 9px; font-weight: 700; letter-spacing: 0.24em; color: var(--ts); text-transform: uppercase; }
+    .header-brand { font-size: 16px; font-weight: 800; color: var(--gold); letter-spacing: 0.08em; }
+    .header-sep { width: 1px; height: 28px; background: var(--border); }
+    .header-collector { font-size: 12px; color: var(--ts); }
+
+    .logout-btn {
+      background: none; border: 1px solid var(--border); border-radius: 4px;
+      color: var(--ts); font-size: 11px; font-weight: 600; letter-spacing: 0.06em;
+      padding: 7px 14px; cursor: pointer; font-family: 'DM Sans', sans-serif;
+      transition: color 0.2s, border-color 0.2s;
+    }
+    .logout-btn:hover { color: var(--tp); border-color: rgba(255,255,255,0.14); }
+
+    /* Stats bar */
+    .stats-bar {
+      display: flex; background: var(--border); gap: 1px;
+      border-bottom: 1px solid var(--border); flex-shrink: 0;
+    }
+    .stat-item {
+      flex: 1; display: flex; flex-direction: column; align-items: center;
+      padding: 14px 12px; background: var(--s1); gap: 3px;
+    }
+    .stat-num { font-size: 22px; font-weight: 800; color: var(--gold); line-height: 1; }
+    .stat-lbl { font-size: 9px; font-weight: 700; letter-spacing: 0.14em; color: var(--ts); text-transform: uppercase; }
+
+    /* Body: 2-column */
+    .app-body {
+      display: grid; grid-template-columns: 420px 1fr;
+      flex: 1; overflow: hidden;
+    }
+
+    /* Left column */
+    .col-left {
+      border-right: 1px solid var(--border);
+      overflow-y: auto; display: flex; flex-direction: column;
+    }
+    .col-left::-webkit-scrollbar { width: 3px; }
+    .col-left::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+    .form-section { padding: 24px 20px; border-bottom: 1px solid var(--border); }
+    .section-label {
+      font-size: 10px; font-weight: 700; letter-spacing: 0.2em; color: var(--ts);
+      text-transform: uppercase; margin-bottom: 18px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .section-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+    .entry-form { display: flex; flex-direction: column; gap: 10px; }
+    .row2-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+    .btn-submit {
+      padding: 16px; background: var(--gold); color: #000;
+      border: none; border-radius: 5px; font-family: 'DM Sans', sans-serif;
+      font-size: 15px; font-weight: 800; letter-spacing: 0.04em;
+      cursor: pointer; width: 100%; transition: background 0.2s, transform 0.1s;
+      margin-top: 4px;
+    }
+    .btn-submit:active { transform: scale(0.97); }
+    .btn-submit:disabled { opacity: 0.4; cursor: not-allowed; }
+
+    /* Queue notice */
+    .queue-notice {
+      margin: 0 20px 16px; padding: 10px 14px;
+      background: rgba(251,191,36,0.06); border: 1px solid rgba(251,191,36,0.2);
+      border-radius: 5px; font-size: 12px; color: var(--ts); display: none;
+    }
+    .queue-notice.visible { display: block; }
+    .queue-notice strong { color: var(--gold); }
+
+    /* My session entries */
+    .session-section { padding: 0 20px 20px; flex: 1; }
+    .contrib-item {
+      display: flex; align-items: center; gap: 10px;
+      padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.03);
+      animation: slideIn 0.3s ease;
+    }
+    @keyframes slideIn { from { opacity:0; transform:translateX(-8px); } to { opacity:1; transform:translateX(0); } }
+    .c-av {
+      width: 30px; height: 30px; border-radius: 50%;
+      background: var(--s3); border: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 10px; font-weight: 700; color: var(--gold); flex-shrink: 0;
+    }
+    .c-info { flex: 1; min-width: 0; }
+    .c-name { font-size: 13px; font-weight: 600; color: var(--tp); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .c-ward { font-size: 11px; color: var(--ts); margin-top: 1px; }
+    .c-amt { font-size: 12px; font-weight: 700; color: var(--green); flex-shrink: 0; }
+
+    /* Right column */
+    .col-right {
+      overflow-y: auto; display: flex; flex-direction: column; gap: 0;
+      background: var(--s0);
+    }
+    .col-right::-webkit-scrollbar { width: 3px; }
+    .col-right::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+    /* M-Pesa card */
+    .mpesa-card {
+      margin: 20px 20px 0;
+      padding: 18px 20px;
+      background: rgba(251,191,36,0.04);
+      border: 1px solid var(--borderg);
+      border-radius: 6px;
+      display: flex; align-items: center; gap: 16px;
+    }
+    .mpesa-card-icon {
+      width: 36px; height: 36px; border-radius: 50%;
+      background: rgba(251,191,36,0.1); border: 1px solid var(--borderg);
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; font-size: 16px;
+    }
+    .mpesa-card-body { flex: 1; min-width: 0; }
+    .mpesa-card-label { font-size: 9px; font-weight: 700; letter-spacing: 0.2em; color: var(--green); text-transform: uppercase; margin-bottom: 3px; }
+    .mpesa-card-number { font-size: 20px; font-weight: 800; color: var(--gold); letter-spacing: 0.04em; }
+    .mpesa-card-hint { font-size: 11px; color: var(--ts); margin-top: 3px; }
+
+    /* Live boards */
+    .board-wrap { margin: 16px 20px; border: 1px solid var(--border); border-radius: 6px; overflow: hidden; }
+    .board-head {
+      padding: 12px 18px; border-bottom: 1px solid var(--border);
+      background: var(--s2); display: flex; align-items: center; justify-content: space-between;
+    }
+    .board-head h3 { font-size: 10px; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: var(--ts); }
+    .live-pill { display: flex; align-items: center; gap: 5px; font-size: 10px; font-weight: 600; color: var(--green); }
+    .ld { width: 5px; height: 5px; border-radius: 50%; background: var(--green); animation: blink 2s ease-in-out infinite; }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:.4} }
+
+    .ward-row { display: flex; align-items: center; gap: 10px; padding: 10px 18px; border-bottom: 1px solid rgba(255,255,255,0.035); }
+    .ward-row:last-child { border-bottom: none; }
+    .wr-rank { font-size: 11px; font-weight: 700; color: var(--tt); width: 18px; flex-shrink: 0; }
+    .wr-rank.r1 { color: var(--gold); }
+    .wr-rank.r2 { color: #d4d4d4; }
+    .wr-rank.r3 { color: #cd7c3e; }
+    .wr-name { font-size: 13px; font-weight: 600; color: var(--tp); flex: 1; }
+    .wr-bar { flex: 1.5; }
+    .wr-bt { height: 3px; background: rgba(255,255,255,0.05); border-radius: 2px; overflow: hidden; }
+    .wr-bf { height: 100%; background: var(--green); border-radius: 2px; }
+    .wr-bf.gold { background: var(--gold); }
+    .wr-bf.teal { background: var(--teal); }
+    .wr-n { font-size: 13px; font-weight: 700; color: var(--gold); width: 28px; text-align: right; flex-shrink: 0; }
+    .wr-n.tl { color: var(--teal); }
+
+    .contrib-row { display: flex; align-items: center; gap: 10px; padding: 9px 18px; border-bottom: 1px solid rgba(255,255,255,0.035); }
+    .contrib-row:last-child { border-bottom: none; }
+    .contrib-av {
+      width: 26px; height: 26px; border-radius: 50%;
+      background: var(--s2); border: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 10px; font-weight: 700; color: var(--gold); flex-shrink: 0;
+    }
+    .contrib-info { flex: 1; min-width: 0; }
+    .contrib-name { font-size: 13px; font-weight: 600; color: var(--tp); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .contrib-ward { font-size: 11px; color: var(--ts); margin-top: 1px; }
+    .diasp { color: var(--teal); }
+    .contrib-amt { font-size: 12px; font-weight: 700; color: var(--green); flex-shrink: 0; }
+    .contrib-quote { font-size: 11px; color: var(--tt); font-style: italic; margin-top: 2px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+    /* ── MOBILE: stack columns ── */
+    @media (max-width: 860px) {
+      .app-body { grid-template-columns: 1fr; overflow: visible; }
+      .col-left { border-right: none; border-bottom: 1px solid var(--border); overflow: visible; }
+      .col-right { overflow: visible; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Login -->
+<div id="loginScreen">
+  <div class="login-brand">
+    <div class="login-brand-eyebrow">Collector Portal</div>
+    <div class="login-brand-name">Kasipul Rise</div>
+    <div class="login-brand-sub">April 25, 2026 · Agoro Sare</div>
+  </div>
+  <div class="login-card">
+    <h2>Sign in to collect</h2>
+    <div class="field">
+      <label for="loginEmail">Email</label>
+      <input type="email" id="loginEmail" placeholder="your@email.com" autocomplete="email" />
+    </div>
+    <div class="field">
+      <label for="loginPass">Password</label>
+      <input type="password" id="loginPass" placeholder="••••••••" autocomplete="current-password" />
+    </div>
+    <div id="loginError">Incorrect email or password.</div>
+    <button class="btn-primary" id="loginBtn" onclick="doLogin()">Sign In →</button>
+  </div>
+</div>
+
+<!-- Success flash -->
+<div class="success-flash" id="successFlash">✓ Added to the board!</div>
+
+<!-- Main App -->
+<div id="app">
+
+  <div class="offline-badge" id="offlineBadge">
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M1 1l22 22M16.72 11.06A10.94 10.94 0 0 1 19 12.55M5 12.55a10.94 10.94 0 0 1 5.17-2.39M10.71 5.05A16 16 0 0 1 22.56 9M1.42 9a15.91 15.91 0 0 1 4.7-2.88M8.53 16.11a6 6 0 0 1 6.95 0M12 20h.01"/></svg>
+    Offline — entries will sync when you reconnect
+  </div>
+
+  <!-- Header -->
+  <div class="app-header">
+    <div class="header-left">
+      <div class="header-logo">
+        <span class="header-eyebrow">Collector Portal</span>
+        <span class="header-brand">Kasipul Rise</span>
+      </div>
+      <div class="header-sep"></div>
+      <span class="header-collector" id="collectorId">—</span>
+    </div>
+    <button class="logout-btn" onclick="doLogout()">Sign Out</button>
+  </div>
+
+  <!-- Stats bar -->
+  <div class="stats-bar">
+    <div class="stat-item">
+      <div class="stat-num" id="statTotal">0</div>
+      <div class="stat-lbl">Total Contributors</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num" id="statMine">0</div>
+      <div class="stat-lbl">My Entries Today</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num" id="statKsh">0</div>
+      <div class="stat-lbl">KSh Raised</div>
+    </div>
+  </div>
+
+  <!-- 2-column body -->
+  <div class="app-body">
+
+    <!-- LEFT: Entry form + my session -->
+    <div class="col-left">
+
+      <div class="form-section">
+        <div class="section-label">New Contributor</div>
+        <div class="entry-form">
+          <div class="field">
+            <label for="entName">Full Name *</label>
+            <input type="text" id="entName" placeholder="E.g. Omondi James" autocomplete="off" />
+          </div>
+          <div class="row2-grid">
+            <div class="field">
+              <label for="entPhone">Phone (optional)</label>
+              <input type="tel" id="entPhone" placeholder="07XX XXX XXX" />
+            </div>
+            <div class="field">
+              <label for="entAmt">Amount (KSh) *</label>
+              <input type="number" id="entAmt" placeholder="500" inputmode="numeric" />
+            </div>
+          </div>
+          <div class="field">
+            <label for="entWard">Ward *</label>
+            <select id="entWard">
+              <option value="" disabled selected>Select ward</option>
+              <option value="East Kasipul">East Kasipul</option>
+              <option value="Central Kasipul">Central Kasipul</option>
+              <option value="West Kasipul">West Kasipul</option>
+              <option value="Kasipul Kabondo">Kasipul Kabondo</option>
+              <option value="Ruma">Ruma</option>
+              <option value="Outside Kasipul">Outside Kasipul (Diaspora)</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="entStory">Their quote (optional)</label>
+            <input type="text" id="entStory" placeholder="Why did they contribute?" autocomplete="off" />
+          </div>
+          <button class="btn-submit" id="submitBtn" onclick="submitEntry()">Add to the Board ↗</button>
+        </div>
+      </div>
+
+      <div class="queue-notice" id="queueNotice">
+        <strong id="queueCount">0 entries</strong> queued offline — will sync automatically.
+      </div>
+
+      <div class="session-section">
+        <div class="section-label">My entries this session</div>
+        <div id="myEntries"></div>
+      </div>
+
+    </div><!-- /col-left -->
+
+    <!-- RIGHT: Live boards -->
+    <div class="col-right">
+
+      <!-- M-Pesa reminder -->
+      <div class="mpesa-card">
+        <div class="mpesa-card-icon">📲</div>
+        <div class="mpesa-card-body">
+          <div class="mpesa-card-label">Send M-Pesa to</div>
+          <div class="mpesa-card-number">07XX XXX XXX</div>
+          <div class="mpesa-card-hint">Have them use their full name as the M-Pesa reference</div>
+        </div>
+      </div>
+
+      <!-- Ward leaderboard -->
+      <div class="board-wrap">
+        <div class="board-head">
+          <h3>Ward Leaderboard</h3>
+          <div class="live-pill"><div class="ld"></div> Live</div>
+        </div>
+        <div id="wardBoard">
+          <div class="ward-row" style="justify-content:center;color:var(--ts);font-size:13px;">Loading…</div>
+        </div>
+      </div>
+
+      <!-- All recent contributors -->
+      <div class="board-wrap" style="margin-bottom:20px;">
+        <div class="board-head">
+          <h3>Recent Contributors — All Collectors</h3>
+          <div class="live-pill"><div class="ld"></div> Live</div>
+        </div>
+        <div id="contribList">
+          <div style="padding:16px 18px;color:var(--ts);font-size:13px;">Loading…</div>
+        </div>
+      </div>
+
+    </div><!-- /col-right -->
+  </div><!-- /app-body -->
+</div><!-- /app -->
+
+<!-- Firebase SDK -->
+<script type="module">
+  import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
+  import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut }
+    from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
+  import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, serverTimestamp, enableIndexedDbPersistence }
+    from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+
+  const firebaseConfig = {
+    apiKey:            "AIzaSyC-lcu2rmgy7vIh1tMlHewaA52x-8LdezM",
+    authDomain:        "kasipul-rise-2026.firebaseapp.com",
+    projectId:         "kasipul-rise-2026",
+    storageBucket:     "kasipul-rise-2026.firebasestorage.app",
+    messagingSenderId: "887480309712",
+    appId:             "1:887480309712:web:a274f8b886fcf79348cbd5"
+  };
+
+  const app  = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db   = getFirestore(app);
+
+  enableIndexedDbPersistence(db).catch(() => {});
+
+  let currentUser = null;
+
+  window.addEventListener('online',  () => { document.getElementById('offlineBadge').classList.remove('visible'); });
+  window.addEventListener('offline', () => { document.getElementById('offlineBadge').classList.add('visible'); });
+
+  // ── Auth
+  onAuthStateChanged(auth, user => {
+    currentUser = user;
+    if (user) {
+      document.getElementById('loginScreen').style.display = 'none';
+      document.getElementById('app').style.display = 'flex';
+      document.getElementById('collectorId').textContent = user.email;
+      startListeners();
+    } else {
+      document.getElementById('loginScreen').style.display = 'flex';
+      document.getElementById('app').style.display = 'none';
+    }
+  });
+
+  window.doLogin = async () => {
+    const btn = document.getElementById('loginBtn');
+    const err = document.getElementById('loginError');
+    const email = document.getElementById('loginEmail').value.trim();
+    const pass  = document.getElementById('loginPass').value;
+    err.style.display = 'none';
+    btn.disabled = true; btn.textContent = 'Signing in…';
+    try { await signInWithEmailAndPassword(auth, email, pass); }
+    catch (e) { err.style.display = 'block'; btn.disabled = false; btn.textContent = 'Sign In →'; }
+  };
+  document.getElementById('loginPass').addEventListener('keydown', e => { if (e.key === 'Enter') window.doLogin(); });
+  window.doLogout = () => signOut(auth);
+
+  // ── Submit entry
+  window.submitEntry = async () => {
+    const nameEl  = document.getElementById('entName');
+    const amtEl   = document.getElementById('entAmt');
+    const wardEl  = document.getElementById('entWard');
+    const phoneEl = document.getElementById('entPhone');
+    const storyEl = document.getElementById('entStory');
+    const btn     = document.getElementById('submitBtn');
+
+    const name  = nameEl.value.trim();
+    const amt   = parseInt(amtEl.value, 10);
+    const ward  = wardEl.value;
+    const phone = phoneEl.value.trim();
+    const story = storyEl.value.trim();
+
+    if (!name || !amt || !ward) {
+      nameEl.style.borderColor  = !name ? 'rgba(239,68,68,0.5)' : '';
+      amtEl.style.borderColor   = !amt  ? 'rgba(239,68,68,0.5)' : '';
+      wardEl.style.borderColor  = !ward ? 'rgba(239,68,68,0.5)' : '';
+      return;
+    }
+    nameEl.style.borderColor = amtEl.style.borderColor = wardEl.style.borderColor = '';
+
+    const isDiaspora = ward === 'Outside Kasipul';
+    const entry = {
+      name, phone: phone || null, ward, amount: amt,
+      story: story || null, diaspora: isDiaspora,
+      collectorEmail: currentUser?.email || 'unknown',
+      timestamp: serverTimestamp(),
+    };
+
+    btn.disabled = true; btn.textContent = 'Adding…';
+    try { await addDoc(collection(db, 'contributions'), entry); }
+    catch (e) { console.log('Queued offline:', entry); }
+
+    showFlash(`✓ ${name} added!`);
+    nameEl.value = ''; amtEl.value = ''; phoneEl.value = ''; storyEl.value = '';
+    nameEl.focus();
+    btn.disabled = false; btn.textContent = 'Add to the Board ↗';
+
+    addToMyList({ name, ward, amount: amt, diaspora: isDiaspora });
+    const mc = document.getElementById('statMine');
+    mc.textContent = parseInt(mc.textContent) + 1;
+  };
+  document.getElementById('entStory').addEventListener('keydown', e => {
+    if (e.key === 'Enter') window.submitEntry();
+  });
+
+  // ── Listeners (global + ward)
+  function startListeners() {
+    const q = query(collection(db, 'contributions'), orderBy('timestamp', 'desc'));
+    onSnapshot(q, snapshot => {
+      const all = [];
+      snapshot.forEach(doc => all.push(Object.assign({ id: doc.id }, doc.data())));
+
+      const totalC = all.length;
+      const totalK = all.reduce((s, c) => s + (c.amount || 0), 0);
+
+      document.getElementById('statTotal').textContent = totalC.toLocaleString();
+      document.getElementById('statKsh').textContent   = 'KSh ' + totalK.toLocaleString();
+
+      // Ward leaderboard
+      const wardCounts = {};
+      all.forEach(c => { const w = c.ward||'Unknown'; wardCounts[w] = (wardCounts[w]||0)+1; });
+      const sorted = Object.entries(wardCounts).sort((a,b)=>b[1]-a[1]);
+      const maxC   = (sorted[0]&&sorted[0][1])||1;
+      const rCols  = ['r1','r2','r3'];
+      const bCols  = ['gold','teal',''];
+      const wb = document.getElementById('wardBoard');
+      if (wb) {
+        wb.innerHTML = '';
+        if (sorted.length) {
+          sorted.slice(0,6).forEach((entry,i) => {
+            const pct = Math.round((entry[1]/maxC)*100);
+            const el  = document.createElement('div');
+            el.className = 'ward-row';
+            el.innerHTML =
+              `<span class="wr-rank ${rCols[i]||''}">${i+1}</span>` +
+              `<span class="wr-name">${entry[0]}</span>` +
+              `<div class="wr-bar"><div class="wr-bt"><div class="wr-bf ${bCols[i]||''}" style="width:${pct}%"></div></div></div>` +
+              `<span class="wr-n ${bCols[i]==='teal'?'tl':''}">${entry[1]}</span>`;
+            wb.appendChild(el);
+          });
+        } else {
+          wb.innerHTML = '<div class="ward-row" style="justify-content:center;color:var(--ts);font-size:13px;">No entries yet — be the first!</div>';
+        }
+      }
+
+      // All recent contributors
+      const list = document.getElementById('contribList');
+      if (list) {
+        if (!all.length) {
+          list.innerHTML = '<div style="padding:16px 18px;color:var(--ts);font-size:13px;">No contributors yet.</div>';
+          return;
+        }
+        list.innerHTML = all.slice(0,30).map(c => {
+          const init  = (c.name||'?').split(' ').map(x=>x[0]).join('').toUpperCase().slice(0,2);
+          const diasp = c.diaspora || c.ward === 'Outside Kasipul';
+          return `<div class="contrib-row">
+            <div class="contrib-av">${init}</div>
+            <div class="contrib-info">
+              <div class="contrib-name">${c.name||'—'}</div>
+              <div class="contrib-ward">${diasp?`<span class="diasp">✦ ${c.ward}</span>`:c.ward}</div>
+              ${c.story?`<div class="contrib-quote">"${c.story}"</div>`:''}
+            </div>
+            <div class="contrib-amt">KSh ${(c.amount||0).toLocaleString()}</div>
+          </div>`;
+        }).join('');
+      }
+    });
+  }
+
+  // ── Local session list
+  function addToMyList(c) {
+    const list = document.getElementById('myEntries');
+    const init = c.name.split(' ').map(x=>x[0]).join('').toUpperCase().slice(0,2);
+    const el   = document.createElement('div');
+    el.className = 'contrib-item';
+    el.innerHTML = `
+      <div class="c-av">${init}</div>
+      <div class="c-info">
+        <div class="c-name">${c.name}</div>
+        <div class="c-ward">${c.diaspora?'✦ ':''}${c.ward}</div>
+      </div>
+      <div class="c-amt">KSh ${c.amount.toLocaleString()}</div>`;
+    list.prepend(el);
+  }
+
+  function showFlash(msg) {
+    const f = document.getElementById('successFlash');
+    f.textContent = msg; f.classList.add('show');
+    setTimeout(() => f.classList.remove('show'), 2200);
+  }
+</script>
+
+</body>
+</html>

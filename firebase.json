@@ -1,0 +1,32 @@
+{
+  "hosting": {
+    "public": "docs",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**",
+      "**/*.md",
+      "**/*.py",
+      "**/*.json",
+      "**/Boxing Club/**",
+      "**/Google Reports/**",
+      "**/manifestos/**",
+      "**/posters/**"
+    ],
+    "rewrites": [
+      { "source": "/", "destination": "/kasipul-rise-festival-april-2026.html" },
+      { "source": "/collector", "destination": "/collector.html" }
+    ],
+    "headers": [
+      {
+        "source": "**/*.html",
+        "headers": [
+          { "key": "Cache-Control", "value": "no-cache, no-store, must-revalidate" }
+        ]
+      }
+    ]
+  },
+  "firestore": {
+    "rules": "firestore.rules"
+  }
+}

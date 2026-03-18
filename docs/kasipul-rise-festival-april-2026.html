@@ -1,0 +1,1081 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#000000" />
+  <title>Kasipul Rise Festival — April 25, 2026 · Oyugis</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700;9..40,800&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --gold:    #fbbf24;
+      --green:   #10b981;
+      --teal:    #34d399;
+      --black:   #000;
+      --s1:      #0a0a0a;
+      --s2:      #111;
+      --border:  rgba(255,255,255,0.07);
+      --borderg: rgba(251,191,36,0.15);
+      --tp:      #fafafa;
+      --ts:      #71717a;
+      --tt:      #3f3f46;
+    }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--black);
+      color: var(--tp);
+      overflow: hidden; /* no native scroll — we control it */
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* grain — tiny SVG tile, cheap */
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+      opacity: 0.022;
+      pointer-events: none;
+      z-index: 9999;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 500;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 18px 40px;
+      background: linear-gradient(to bottom, rgba(0,0,0,0.92), transparent);
+    }
+
+    .nav-brand { display: flex; align-items: center; gap: 10px; text-decoration: none; cursor: pointer; background: none; border: none; }
+    .nav-brand svg { width: 32px; height: 32px; }
+    .nav-brand-text { display: flex; flex-direction: column; line-height: 1; }
+    .nav-brand-text .t { font-size: 9px; font-weight: 600; letter-spacing: 0.22em; color: var(--ts); text-transform: uppercase; }
+    .nav-brand-text .b { font-size: 12px; font-weight: 700; letter-spacing: 0.18em; color: var(--gold); }
+
+    .nav-btn {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 9px 22px;
+      background: var(--gold); color: #000;
+      font-size: 12px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
+      text-decoration: none; border-radius: 2px; border: none; cursor: pointer;
+      transition: background 0.2s;
+      font-family: 'DM Sans', sans-serif;
+    }
+    .nav-btn:hover { background: #fcd34d; }
+
+    /* panel dots */
+    .nav-dots { display: flex; align-items: center; gap: 6px; }
+    .nd {
+      width: 5px; height: 5px; border-radius: 50%;
+      background: rgba(255,255,255,0.18);
+      border: none; cursor: pointer; padding: 0;
+      transition: background 0.25s, transform 0.25s;
+    }
+    .nd.active { background: var(--gold); transform: scale(1.5); }
+
+    /* ── HORIZONTAL TRACK ── */
+    .pin-master { width: 100vw; height: 100vh; overflow: hidden; position: relative; }
+
+    .horizontal-track {
+      display: flex;
+      width: 600vw;
+      height: 100vh;
+      transform: translateX(0);
+      transition: transform 0.44s cubic-bezier(0.4, 0, 0.2, 1);
+      will-change: transform;
+    }
+
+    .panel {
+      width: 100vw;
+      height: 100vh;
+      flex-shrink: 0;
+      overflow-y: auto;
+      overflow-x: hidden;
+      position: relative;
+      contain: layout;
+    }
+
+    .panel::-webkit-scrollbar { width: 3px; }
+    .panel::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 2px; }
+
+    /* ── HERO ── */
+    .hero {
+      min-height: 100vh;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      text-align: center;
+      padding: 100px 24px 100px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .g { position: absolute; border-radius: 50%; pointer-events: none; }
+    /* Use box-shadow instead of filter:blur for cheaper glow */
+    .g1 { width: 400px; height: 400px; top: -100px; right: -60px;
+          background: radial-gradient(circle, rgba(251,191,36,0.12) 0%, transparent 70%); }
+    .g2 { width: 350px; height: 350px; bottom: -80px; left: -60px;
+          background: radial-gradient(circle, rgba(16,185,129,0.08) 0%, transparent 70%); }
+
+    .hero-bg-bird { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; pointer-events: none; }
+    .hero-bg-bird svg { width: min(88vw, 840px); height: min(88vw, 840px); opacity: 0.03; }
+
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 5px 14px;
+      border: 1px solid rgba(251,191,36,0.22);
+      border-radius: 2px;
+      font-size: 10px; font-weight: 600; letter-spacing: 0.22em;
+      color: var(--gold); text-transform: uppercase;
+      margin-bottom: 36px; position: relative; z-index: 2;
+    }
+    .hero-badge::before {
+      content: ''; width: 5px; height: 5px; border-radius: 50%;
+      background: var(--green);
+      animation: blink 2s ease-in-out infinite;
+    }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:.4} }
+
+    .hero-title {
+      position: relative; z-index: 2;
+      font-size: clamp(72px, 13vw, 160px);
+      font-weight: 800;
+      line-height: 0.88;
+      letter-spacing: -0.025em;
+      text-transform: uppercase;
+    }
+    .ht-kasipul { display: block; color: var(--tp); }
+    .ht-rise    { display: block; color: var(--gold); }
+    .ht-fest    { display: block; color: var(--tt); }
+
+    .hero-sub {
+      margin-top: 24px;
+      font-size: clamp(11px, 1.3vw, 13px);
+      font-weight: 500;
+      letter-spacing: 0.26em;
+      text-transform: uppercase;
+      color: var(--ts);
+      position: relative; z-index: 2;
+    }
+    .hero-sub strong { color: var(--gold); font-weight: 700; }
+    .one-st { font-size: 0.82em; color: var(--tt); letter-spacing: 0.1em; }
+
+    .hero-counter {
+      display: flex; align-items: center; gap: 16px;
+      margin-top: 36px;
+      position: relative; z-index: 2;
+      flex-wrap: wrap; justify-content: center;
+    }
+    .hc-track { width: clamp(180px, 36vw, 320px); height: 3px; background: rgba(255,255,255,0.07); border-radius: 2px; overflow: hidden; }
+    .hc-fill { height: 100%; background: linear-gradient(to right, var(--green), var(--gold)); border-radius: 2px; width: 0%; transition: width 1.4s ease; }
+    .hc-label { font-size: 13px; color: var(--ts); white-space: nowrap; }
+    .hc-label strong { color: var(--gold); }
+
+    .hero-ctas {
+      display: flex; align-items: center; gap: 12px;
+      margin-top: 36px; flex-wrap: wrap; justify-content: center;
+      position: relative; z-index: 2;
+    }
+
+    .btn-gold {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 15px 36px;
+      background: var(--gold); color: #000;
+      font-size: 13px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
+      text-decoration: none; border-radius: 2px; border: none; cursor: pointer;
+      font-family: 'DM Sans', sans-serif;
+      transition: background 0.2s, box-shadow 0.2s;
+    }
+    .btn-gold:hover { background: #fcd34d; box-shadow: 0 6px 24px rgba(251,191,36,0.25); }
+
+    .btn-outline {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 15px 28px;
+      border: 1px solid var(--border); color: var(--ts);
+      font-size: 13px; font-weight: 500; letter-spacing: 0.05em;
+      text-decoration: none; border-radius: 2px; background: none; cursor: pointer;
+      font-family: 'DM Sans', sans-serif;
+      transition: border-color 0.2s, color 0.2s;
+    }
+    .btn-outline:hover { border-color: rgba(255,255,255,0.14); color: var(--tp); }
+
+    .hero-scroll {
+      position: absolute; bottom: 8vh; left: 50%;
+      transform: translateX(-50%);
+      color: var(--tt); font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase;
+      display: flex; flex-direction: column; align-items: center; gap: 6px;
+      animation: bob 2.5s ease-in-out infinite;
+      z-index: 2;
+    }
+    @keyframes bob { 0%,100%{transform:translateX(-50%) translateY(0)} 50%{transform:translateX(-50%) translateY(5px)} }
+
+    /* ── STORY ── */
+    .story { padding: 96px 40px; max-width: 760px; margin: 0 auto; text-align: center; }
+
+    .eyebrow {
+      font-size: 10px; font-weight: 700; letter-spacing: 0.26em;
+      color: var(--green); text-transform: uppercase;
+      display: block; margin-bottom: 28px;
+    }
+
+    .story h2 { font-size: clamp(32px, 5vw, 56px); font-weight: 800; line-height: 1.05; letter-spacing: -0.02em; margin-bottom: 28px; }
+    .story h2 em { font-style: normal; color: var(--gold); }
+    .story p { font-size: clamp(16px, 1.8vw, 19px); line-height: 1.78; color: #a1a1aa; margin-bottom: 20px; }
+    .story p strong { color: var(--tp); }
+
+    .pull {
+      border-left: 3px solid var(--gold);
+      padding: 4px 0 4px 24px;
+      text-align: left;
+      font-size: clamp(18px, 2.2vw, 24px);
+      font-weight: 700; color: var(--gold);
+      line-height: 1.45;
+      margin: 12px 0 24px;
+    }
+    .luo-seal { display: block; margin-top: 10px; font-size: 0.82em; font-weight: 700; letter-spacing: 0.2em; color: rgba(251,191,36,0.55); text-transform: uppercase; }
+
+    /* ── COUNTER SECTION ── */
+    .counter-section {
+      padding: 0; width: 100%;
+      display: flex; flex-direction: column;
+      justify-content: center; min-height: 100vh;
+    }
+    .counter-inner { max-width: 640px; margin: 0 auto; padding: 80px 28px 60px; }
+
+    .counter-top { text-align: center; margin-bottom: 40px; }
+    .counter-top h2 { font-size: clamp(26px, 4vw, 44px); font-weight: 800; letter-spacing: -0.02em; margin-bottom: 8px; }
+    .counter-top h2 em { font-style: normal; color: var(--gold); }
+    .counter-top p { font-size: 15px; color: var(--ts); }
+
+    .counter-num-row { display: flex; align-items: flex-end; justify-content: center; gap: 6px; margin-bottom: 16px; }
+    .cnum { font-size: clamp(80px, 14vw, 136px); font-weight: 800; color: var(--gold); line-height: 1; letter-spacing: -0.04em; font-variant-numeric: tabular-nums; }
+    .cdenom { font-size: clamp(22px, 3.5vw, 36px); font-weight: 700; color: var(--ts); padding-bottom: 10px; }
+
+    .cbar-wrap { max-width: 600px; margin: 0 auto 8px; }
+    .cbar-track { height: 6px; background: rgba(255,255,255,0.06); border-radius: 3px; overflow: hidden; }
+    .cbar-fill { height: 100%; background: linear-gradient(to right, var(--green), var(--gold)); border-radius: 3px; width: 0%; transition: width 2s ease; }
+    .cbar-labels { display: flex; justify-content: space-between; margin-top: 8px; }
+    .cbar-labels span { font-size: 11px; font-weight: 600; letter-spacing: 0.1em; color: var(--ts); }
+    .cbar-labels .live { color: var(--green); }
+
+    .kshs-row { width: 100%; margin: 18px 0 4px; }
+    .kshs-inner { display: flex; align-items: center; justify-content: center; gap: 20px; flex-wrap: wrap; margin-bottom: 10px; }
+    .kshs-raised, .kshs-target { display: flex; flex-direction: column; align-items: center; gap: 2px; }
+    .kshs-div { width: 1px; height: 36px; background: var(--border); }
+    .kshs-num { font-size: clamp(18px, 4vw, 26px); font-weight: 800; color: var(--gold); }
+    .kshs-num.dim { color: var(--ts); }
+    .kshs-label { font-size: 11px; color: var(--ts); text-transform: uppercase; letter-spacing: 0.06em; }
+    .kshs-bar-track { width: 100%; height: 6px; background: rgba(255,255,255,0.06); border-radius: 10px; overflow: hidden; margin-bottom: 8px; }
+    .kshs-bar-fill { height: 100%; background: linear-gradient(90deg, var(--gold), var(--green)); border-radius: 10px; width: 0; transition: width 1.2s cubic-bezier(.4,0,.2,1); }
+    .kshs-note { font-size: 11px; color: var(--ts); text-align: center; line-height: 1.5; }
+
+    /* ── URGENCY BLOCK ── */
+    .urgency-block {
+      margin-top: 28px;
+      padding: 24px 24px;
+      background: linear-gradient(135deg, rgba(239,68,68,0.1), rgba(239,68,68,0.03));
+      border: 1px solid rgba(239,68,68,0.3);
+      border-left: 3px solid #ef4444;
+      border-radius: 6px;
+      display: flex; align-items: center; gap: 24px;
+    }
+    .ub-stat {
+      flex-shrink: 0; text-align: center;
+      padding-right: 24px; border-right: 1px solid rgba(239,68,68,0.18);
+    }
+    .ub-number { font-size: clamp(44px, 8vw, 68px); font-weight: 800; color: #ef4444; line-height: 1; font-variant-numeric: tabular-nums; }
+    .ub-unit { font-size: 9px; font-weight: 700; letter-spacing: 0.22em; color: rgba(239,68,68,0.65); text-transform: uppercase; margin-top: 4px; }
+    .ub-body {}
+    .ub-deadline { font-size: 10px; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; color: #ef4444; margin-bottom: 6px; }
+    .ub-title { font-size: clamp(15px, 2vw, 18px); font-weight: 800; color: #fafafa; margin-bottom: 5px; line-height: 1.2; }
+    .ub-desc { font-size: 13px; color: var(--ts); line-height: 1.5; }
+
+    /* ── COUNTDOWN ── */
+    .countdown-strip {
+      display: flex; align-items: center; justify-content: center; gap: 32px;
+      padding: 18px 40px;
+      background: var(--s1);
+      border-top: 1px solid var(--border);
+      flex-wrap: wrap;
+    }
+    .cd-label { font-size: 10px; font-weight: 700; letter-spacing: 0.22em; color: var(--ts); text-transform: uppercase; }
+    .cd-units { display: flex; align-items: center; gap: 8px; }
+    .cd-unit { display: flex; flex-direction: column; align-items: center; gap: 2px; min-width: 44px; }
+    .cd-num { font-size: clamp(20px, 3.5vw, 28px); font-weight: 800; color: var(--gold); line-height: 1; font-variant-numeric: tabular-nums; }
+    .cd-name { font-size: 9px; font-weight: 600; letter-spacing: 0.18em; color: var(--tt); text-transform: uppercase; }
+    .cd-sep { font-size: 18px; font-weight: 300; color: var(--tt); padding-bottom: 10px; }
+
+    /* ── M-PESA PANEL ── */
+    .mpesa-panel-inner {
+      max-width: 560px; margin: 0 auto;
+      padding: 80px 28px 40px;
+      display: flex; flex-direction: column; align-items: center;
+      justify-content: center; min-height: 100vh; text-align: center;
+    }
+
+    .mpesa-box {
+      max-width: 480px; margin: 0 auto 32px;
+      padding: 32px 28px;
+      border: 1px solid var(--borderg);
+      border-radius: 4px;
+      background: rgba(251,191,36,0.03);
+      text-align: center;
+      display: flex; flex-direction: column; gap: 14px;
+    }
+    .mpesa-box .ml { font-size: 10px; font-weight: 700; letter-spacing: 0.25em; color: var(--green); text-transform: uppercase; }
+    .mpesa-box .mh { font-size: 17px; font-weight: 700; color: var(--tp); }
+    .mpesa-box .mn { font-size: clamp(28px, 6vw, 44px); font-weight: 800; color: var(--gold); letter-spacing: 0.04em; }
+    .mpesa-box .mamt { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; }
+    .chip { padding: 5px 11px; border: 1px solid var(--border); border-radius: 100px; font-size: 12px; font-weight: 600; color: var(--ts); cursor: pointer; transition: border-color 0.15s, color 0.15s; white-space: nowrap; }
+    .mpesa-box .mamt { flex-wrap: nowrap; overflow-x: auto; }
+    .chip:hover, .chip.on { border-color: var(--gold); color: var(--gold); }
+    .mpesa-box .mn2 { font-size: 13px; color: var(--ts); line-height: 1.55; }
+    .mpesa-box .mn2 strong { color: var(--tp); }
+
+    .confirm-flow { display: flex; flex-direction: column; gap: 10px; text-align: left; width: 100%; }
+    .cf-step { display: flex; align-items: flex-start; gap: 10px; }
+    .cf-n {
+      width: 20px; height: 20px; border-radius: 50%; flex-shrink: 0;
+      background: rgba(251,191,36,0.12); border: 1px solid rgba(251,191,36,0.25);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 10px; font-weight: 700; color: var(--gold); margin-top: 1px;
+    }
+    .cf-step span:last-child { font-size: 13px; color: var(--ts); line-height: 1.55; }
+    .cf-step span strong { color: var(--tp); }
+
+    .wa-share { display: flex; flex-direction: column; align-items: center; gap: 10px; margin: 0 auto 32px; }
+    .wa-btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 11px 28px; background: #25d366; color: #000;
+      font-size: 13px; font-weight: 700; letter-spacing: 0.06em;
+      text-decoration: none; border-radius: 2px; transition: background 0.2s;
+    }
+    .wa-btn:hover { background: #1fb958; }
+    .wa-note { font-size: 12px; color: var(--tt); }
+
+    /* ── COMMUNITY BOARD PANEL ── */
+    .boards-panel-inner {
+      max-width: 960px; margin: 0 auto;
+      padding: 80px 28px 40px;
+      display: flex; flex-direction: column;
+      justify-content: center; min-height: 100vh;
+    }
+    .boards-panel-header { text-align: center; margin-bottom: 40px; }
+    .boards-panel-header h2 { font-size: clamp(22px, 3vw, 36px); font-weight: 800; letter-spacing: -0.02em; }
+    .boards-panel-header h2 em { font-style: normal; color: var(--gold); }
+
+    /* Ward + contributors grid */
+    .boards { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+
+    .board { border: 1px solid var(--border); border-radius: 4px; overflow: hidden; }
+    .board-head {
+      padding: 14px 22px; border-bottom: 1px solid var(--border);
+      background: var(--s2); display: flex; align-items: center; justify-content: space-between;
+    }
+    .board-head h3 { font-size: 10px; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; color: var(--ts); }
+    .live-pill { display: flex; align-items: center; gap: 5px; font-size: 10px; font-weight: 600; color: var(--green); }
+    .ld { width: 5px; height: 5px; border-radius: 50%; background: var(--green); animation: blink 2s ease-in-out infinite; }
+
+    .ward-row { display: flex; align-items: center; gap: 10px; padding: 11px 22px; border-bottom: 1px solid rgba(255,255,255,0.035); }
+    .ward-row:last-child { border-bottom: none; }
+    .wr-rank { font-size: 11px; font-weight: 700; color: var(--tt); width: 18px; flex-shrink: 0; }
+    .wr-rank.r1 { color: var(--gold); }
+    .wr-rank.r2 { color: #d4d4d4; }
+    .wr-rank.r3 { color: #cd7c3e; }
+    .wr-name { font-size: 13px; font-weight: 600; color: var(--tp); flex: 1; }
+    .wr-bar { flex: 1.5; }
+    .wr-bt { height: 3px; background: rgba(255,255,255,0.05); border-radius: 2px; overflow: hidden; }
+    .wr-bf { height: 100%; background: var(--green); border-radius: 2px; }
+    .wr-bf.gold { background: var(--gold); }
+    .wr-bf.teal { background: var(--teal); }
+    .wr-n { font-size: 13px; font-weight: 700; color: var(--gold); width: 32px; text-align: right; flex-shrink: 0; }
+    .wr-n.tl { color: var(--teal); }
+
+    .contrib-list { max-height: 280px; overflow-y: auto; }
+    .contrib-list::-webkit-scrollbar { width: 3px; }
+    .contrib-list::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+    .contrib-row { display: flex; align-items: center; gap: 10px; padding: 9px 22px; border-bottom: 1px solid rgba(255,255,255,0.035); }
+    .contrib-row:last-child { border-bottom: none; }
+    .contrib-av {
+      width: 26px; height: 26px; border-radius: 50%;
+      background: var(--s2); border: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 10px; font-weight: 700; color: var(--gold); flex-shrink: 0;
+    }
+    .contrib-info { flex: 1; min-width: 0; }
+    .contrib-name { font-size: 13px; font-weight: 600; color: var(--tp); }
+    .contrib-ward { font-size: 11px; color: var(--ts); margin-top: 1px; }
+    .diasp { color: var(--teal); }
+    .contrib-amt { font-size: 12px; font-weight: 700; color: var(--green); flex-shrink: 0; }
+    .contrib-quote { font-size: 11px; color: var(--tt); font-style: italic; margin-top: 2px; }
+
+    /* ── PROGRAM PANEL ── */
+    #program-slide { background: #050505; }
+
+    .program-inner { padding: 80px 0 0; max-width: 1100px; margin: 0 auto; }
+
+    .program-head { text-align: center; padding: 0 40px; margin-bottom: 64px; }
+    .program-head h2 { font-size: clamp(36px, 6vw, 64px); font-weight: 800; letter-spacing: -0.02em; line-height: 1; margin-bottom: 12px; }
+    .program-head h2 em { font-style: normal; color: var(--gold); }
+    .program-head p { font-size: 16px; color: var(--ts); max-width: 420px; margin: 0 auto; }
+
+    /* Event rows */
+    .event-list { display: flex; flex-direction: column; }
+    .ev-row {
+      display: grid; grid-template-columns: 1fr 1fr;
+      border-top: 1px solid var(--border); min-height: 320px;
+    }
+    .ev-row.rev { direction: rtl; }
+    .ev-row.rev > * { direction: ltr; }
+    .ev-photo { position: relative; overflow: hidden; background: var(--s1); min-height: 260px; }
+    .photo-slot {
+      position: absolute; inset: 0;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      gap: 12px; color: var(--ts);
+      font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase;
+      border-right: 1px solid var(--border);
+    }
+    .ev-row.rev .photo-slot { border-right: none; border-left: 1px solid var(--border); }
+    .photo-slot-icon { opacity: 0.2; }
+    .photo-slot-label { opacity: 0.45; }
+    .ev-text {
+      padding: 44px 48px; display: flex; flex-direction: column; justify-content: center;
+    }
+    .ev-num { font-size: 11px; font-weight: 700; letter-spacing: 0.22em; color: var(--ts); margin-bottom: 20px; }
+    .ev-title { font-size: clamp(24px, 3.5vw, 38px); font-weight: 800; color: var(--tp); line-height: 1.05; margin-bottom: 16px; letter-spacing: -0.02em; }
+    .ev-title em { font-style: normal; color: var(--gold); }
+    .ev-desc { font-size: 15px; color: var(--ts); line-height: 1.7; max-width: 400px; }
+
+    /* Footer (keep for contact) */
+    footer {
+      padding: 40px; border-top: 1px solid rgba(255,255,255,0.06);
+      display: flex; align-items: center; justify-content: space-between;
+      flex-wrap: wrap; gap: 24px; margin-top: 0;
+    }
+
+
+    /* Social links */
+    .social-links { display: flex; align-items: center; gap: 12px; }
+    .social-link {
+      width: 34px; height: 34px; border-radius: 50%;
+      border: 1px solid var(--border); display: flex; align-items: center; justify-content: center;
+      color: var(--ts); text-decoration: none;
+      transition: border-color 0.2s, color 0.2s;
+    }
+    .social-link:hover { border-color: var(--gold); color: var(--gold); }
+    .social-link svg { width: 15px; height: 15px; }
+
+    /* Footer */
+    footer {
+      padding: 40px; border-top: 1px solid rgba(255,255,255,0.06);
+      display: flex; align-items: center; justify-content: space-between;
+      flex-wrap: wrap; gap: 24px; margin-top: 40px;
+    }
+    .foot-brand { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+    .foot-brand svg { width: 28px; height: 28px; }
+    .foot-brand-text { display: flex; flex-direction: column; line-height: 1.3; }
+    .foot-brand-text .ft { font-size: 10px; font-weight: 600; letter-spacing: 0.15em; color: var(--ts); }
+    .foot-brand-text .fb { font-size: 13px; font-weight: 700; letter-spacing: 0.12em; color: var(--gold); }
+    .foot-center { font-size: 12px; color: var(--tt); text-align: center; line-height: 1.7; }
+    .foot-center a { color: var(--ts); text-decoration: none; }
+    .foot-center a:hover { color: var(--tp); }
+    .foot-right { font-size: 12px; color: var(--tt); text-align: right; line-height: 1.7; }
+    .foot-right strong { color: var(--gold); font-weight: 700; }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 860px) {
+      nav { padding: 14px 20px; }
+      .story { padding: 72px 20px; }
+      .counter-inner { padding: 72px 20px 36px; }
+      .mpesa-panel-inner { padding: 72px 20px 36px; }
+      .boards-panel-inner { padding: 72px 20px 36px; }
+      .boards { grid-template-columns: 1fr; }
+      .program-inner { padding: 72px 0 0; }
+      .program-head { padding: 0 20px; margin-bottom: 44px; }
+      .ev-row { grid-template-columns: 1fr; min-height: auto; }
+      .ev-row.rev { direction: ltr; }
+      .ev-photo { min-height: 200px; }
+      .photo-slot { border-right: none !important; border-left: none !important; border-bottom: 1px solid var(--border); }
+      .ev-text { padding: 28px 20px; }
+      footer { flex-direction: column; align-items: center; text-align: center; padding: 32px 20px; }
+      .foot-right { text-align: center; }
+      .nav-dots { display: none; } /* too cramped on small nav */
+    }
+    @media (max-width: 560px) {
+      .row2 { grid-template-columns: 1fr; }
+      .glass-grid { grid-template-columns: 1fr; gap: 14px; }
+      .glass-card { padding: 24px 20px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── NAV ── -->
+<nav>
+  <button class="nav-brand" onclick="navTo(0)">
+    <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+      <path d="M100,40 L88,55 M100,40 L112,55" stroke="#fbbf24" stroke-width="5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M70,62 L61,72 M70,62 L79,72" stroke="#f59e0b" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M130,62 L121,72 M130,62 L139,72" stroke="#f59e0b" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M45,82 L38,90 M45,82 L52,90" stroke="#10b981" stroke-width="3.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M100,78 L91,88 M100,78 L109,88" stroke="#10b981" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M155,82 L148,90 M155,82 L162,90" stroke="#10b981" stroke-width="3.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M60,100 L54,107 M60,100 L66,107" stroke="#34d399" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M140,100 L134,107 M140,100 L146,107" stroke="#34d399" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+    <div class="nav-brand-text">
+      <span class="t">Kasipul</span>
+      <span class="b">Rise</span>
+    </div>
+  </button>
+
+  <div class="nav-dots" id="navDots"></div>
+
+  <button class="nav-btn" onclick="navTo(3)">
+    Be a Founder
+    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+  </button>
+</nav>
+
+<main class="pin-master">
+  <div class="horizontal-track" id="track">
+
+    <!-- ==================== PANEL 1: HERO ==================== -->
+    <section class="panel">
+      <section class="hero">
+        <div class="g g1"></div>
+        <div class="g g2"></div>
+        <div class="hero-bg-bird" aria-hidden="true">
+          <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+            <path d="M100,40 L88,55 M100,40 L112,55" stroke="#fbbf24" stroke-width="5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M70,62 L61,72 M70,62 L79,72" stroke="#f59e0b" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M130,62 L121,72 M130,62 L139,72" stroke="#f59e0b" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M45,82 L38,90 M45,82 L52,90" stroke="#10b981" stroke-width="3.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M100,78 L91,88 M100,78 L109,88" stroke="#10b981" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M155,82 L148,90 M155,82 L162,90" stroke="#10b981" stroke-width="3.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M60,100 L54,107 M60,100 L66,107" stroke="#34d399" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M140,100 L134,107 M140,100 L146,107" stroke="#34d399" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+
+        <div class="hero-badge">First Edition · Kasipul Constituency · Homa Bay</div>
+
+        <h1 class="hero-title">
+          <span class="ht-kasipul">Kasipul</span>
+          <span class="ht-rise">Rise</span>
+          <span class="ht-fest">Festival</span>
+        </h1>
+
+        <p class="hero-sub">1000 Dreams from <strong>One Street</strong> <span class="one-st">(1000 Street, Kasipul)</span>&nbsp;·&nbsp; April 25, 2026 &nbsp;·&nbsp; Agoro Sare, Oyugis</p>
+
+        <div class="hero-counter">
+          <div class="hc-track"><div class="hc-fill" id="heroFill"></div></div>
+          <span class="hc-label"><strong id="heroN">0</strong> Kasipul people have sent M-Pesa to build this</span>
+        </div>
+
+        <div class="hero-ctas">
+          <button class="btn-gold" onclick="navTo(3)">
+            Build With Us
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </button>
+          <button class="btn-outline" onclick="navTo(5)">See the Program</button>
+        </div>
+
+        <div class="hero-scroll" aria-hidden="true">
+          <span style="font-size:8px;">SWIPE TO DISCOVER</span>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
+        </div>
+      </section>
+
+      <div class="countdown-strip">
+        <span class="cd-label">April 25 is in</span>
+        <div class="cd-units">
+          <div class="cd-unit"><div class="cd-num" id="cdDays">00</div><div class="cd-name">Days</div></div>
+          <div class="cd-sep">:</div>
+          <div class="cd-unit"><div class="cd-num" id="cdHours">00</div><div class="cd-name">Hours</div></div>
+          <div class="cd-sep">:</div>
+          <div class="cd-unit"><div class="cd-num" id="cdMins">00</div><div class="cd-name">Min</div></div>
+          <div class="cd-sep">:</div>
+          <div class="cd-unit"><div class="cd-num" id="cdSecs">00</div><div class="cd-name">Sec</div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== PANEL 2: STORY ==================== -->
+    <section class="panel" style="display:flex;flex-direction:column;justify-content:center;align-items:center;background:radial-gradient(circle at center,#111,#000);">
+      <section class="story" style="max-width:800px;padding:40px;">
+        <span class="eyebrow" style="display:block;text-align:center;">Wach Kasipul</span>
+        <h2 style="text-align:center;font-size:clamp(40px,8vw,84px);">The talent was<br/>always <em>here.</em></h2>
+
+        <p style="text-align:center;font-size:clamp(16px,1.8vw,20px);line-height:1.6;color:var(--ts);max-width:600px;margin:0 auto 40px;">Fighters. Performers. Builders. Every one of them left to be seen — not because the gift wasn't real, but because no one had built the stage yet. For the first time, we are building it ourselves. Not imported. Not borrowed. Built by the people it was made for.</p>
+
+        <div class="pull" style="text-align:center;margin:60px auto;">"Ok warito. Wagero kendwa."
+          <span class="luo-seal" style="justify-content:center;margin-top:16px;">Mar jopiny. For jopiny. By jopiny.</span>
+        </div>
+
+        <p style="text-align:center;font-size:clamp(15px,1.6vw,18px);color:var(--ts);">April 25, Agoro Sare. Add your name. Your ward. Your sentence. <strong>The founding record of Kasipul Rise belongs to the people who built it —</strong> not the ones who showed up after.</p>
+      </section>
+    </section>
+
+
+    <!-- ==================== PANEL 3: FUND STATS + DEADLINE ==================== -->
+    <section class="panel" id="counter" style="background:#050505;">
+      <div class="counter-section">
+        <div class="counter-inner">
+
+          <div class="counter-top">
+            <span class="eyebrow">Community Fund</span>
+            <h2>1,000 Dreams.<br/><em>1,000 Builders.</em></h2>
+            <p id="counterDesc">Loading live count…</p>
+          </div>
+
+          <div class="counter-num-row">
+            <div class="cnum" id="cnum">0</div>
+            <div class="cdenom">/ 1,000</div>
+          </div>
+
+          <div class="cbar-wrap">
+            <div class="cbar-track"><div class="cbar-fill" id="cbarFill"></div></div>
+            <div class="cbar-labels">
+              <span class="live" id="liveLabel">▲ 0 contributors</span>
+              <span>Goal: 1,000</span>
+            </div>
+          </div>
+
+          <div class="kshs-row">
+            <div class="kshs-inner">
+              <div class="kshs-raised">
+                <span class="kshs-num" id="kshsNum">KSh 0</span>
+                <span class="kshs-label">raised by the community</span>
+              </div>
+              <div class="kshs-div"></div>
+              <div class="kshs-target">
+                <span class="kshs-num dim">KSh 80,000</span>
+                <span class="kshs-label">community target</span>
+              </div>
+            </div>
+            <div class="kshs-bar-track"><div class="kshs-bar-fill" id="kshsBarFill"></div></div>
+            <p class="kshs-note">Community funds cover: sound system deposit · ring equipment · stage scaffold · MC brief · programme printing</p>
+          </div>
+
+          <!-- Urgency block -->
+          <div class="urgency-block">
+            <div class="ub-stat">
+              <div class="ub-number">47</div>
+              <div class="ub-unit">needed</div>
+            </div>
+            <div class="ub-body">
+              <div class="ub-deadline">⏱ Deadline — April 5</div>
+              <div class="ub-title">Sound system deposit due.</div>
+              <p class="ub-desc">47 more contributors this week secures the main stage. After April 5, the slot goes to someone else.</p>
+            </div>
+          </div>
+
+          <div style="text-align:center;margin-top:28px;">
+            <button class="btn-gold" onclick="navTo(3)">
+              Build With Us
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </button>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+
+    <!-- ==================== PANEL 4: M-PESA CTA ==================== -->
+    <section class="panel" style="background:radial-gradient(circle at 50% 40%,rgba(251,191,36,0.05),#000 65%);">
+      <div class="mpesa-panel-inner">
+
+        <div style="margin-bottom:36px;">
+          <span class="eyebrow" style="display:block;margin-bottom:14px;">Add Your Name to the Founding Record</span>
+          <h2 style="font-size:clamp(32px,5vw,54px);font-weight:800;letter-spacing:-0.03em;line-height:1.1;">Add Your Name.<br/><span style="color:var(--gold);">Become a founder.</span></h2>
+        </div>
+
+        <!-- M-Pesa CTA box -->
+        <div class="mpesa-box">
+          <span class="ml">Send to this number</span>
+          <div class="mn">07XX XXX XXX</div>
+          <div class="mamt">
+            <span class="chip">KSh 100</span>
+            <span class="chip on">KSh 500</span>
+            <span class="chip">KSh 1,000</span>
+            <span class="chip">KSh 2,000</span>
+          </div>
+          <div class="confirm-flow">
+            <div class="cf-step"><span class="cf-n">1</span><span>Contribute via M-Pesa to the number above. Any amount.</span></div>
+            <div class="cf-step"><span class="cf-n">2</span><span>Use <strong>your name</strong> as the M-Pesa reference when sending.</span></div>
+            <div class="cf-step"><span class="cf-n">3</span><span>WhatsApp <strong>your name, your ward, and one sentence</strong> — why you built this. Your words go on the board alongside your name.</span></div>
+          </div>
+          <p class="mn2">Entry on the day is <strong>KSh 200 at the gate</strong> — separate from this.</p>
+        </div>
+
+        <!-- WhatsApp share -->
+        <div class="wa-share">
+          <a href="https://wa.me/?text=Nimeweka%20jina%20langu%20kama%20mmoja%20wa%201%2C000%20wajenzi%20wa%20Kasipul%20Rise%20Festival%20%E2%80%94%20April%2025%2C%20Agoro%20Sare.%20Kasipul%20inajijengea.%20Weka%20jina%20lako%3A%20kasipulrise.co.ke" target="_blank" rel="noopener" class="wa-btn">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.09.537 4.054 1.475 5.765L.057 23.617a.75.75 0 0 0 .922.922l5.852-1.418A11.945 11.945 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.75a9.744 9.744 0 0 1-4.98-1.365l-.356-.213-3.694.894.912-3.589-.233-.369A9.745 9.745 0 0 1 2.25 12c0-5.376 4.374-9.75 9.75-9.75s9.75 4.374 9.75 9.75-4.374 9.75-9.75 9.75z"/></svg>
+            Share on WhatsApp
+          </a>
+          <p class="wa-note">Share with someone from Kasipul who should be on this board.</p>
+        </div>
+
+      </div>
+    </section>
+
+
+    <!-- ==================== PANEL 5: COMMUNITY BOARD ==================== -->
+    <section class="panel" style="background:radial-gradient(circle at 50% 0%,rgba(16,185,129,0.04),#000 60%);">
+      <div class="boards-panel-inner">
+
+        <div class="boards-panel-header">
+          <span class="eyebrow" style="display:block;margin-bottom:12px;">Live — Updated in Real Time</span>
+          <h2>Which ward<br/><em>leads the build?</em></h2>
+        </div>
+
+        <div class="boards">
+          <div class="board" id="wardBoard">
+            <div class="board-head">
+              <h3>Ward Leaderboard — which ward leads?</h3>
+              <div class="live-pill"><div class="ld"></div> Live</div>
+            </div>
+            <div class="ward-row" style="justify-content:center;padding:20px;color:var(--ts);font-size:13px;">No data yet — be the first!</div>
+          </div>
+          <div class="board">
+            <div class="board-head">
+              <h3>Recent Contributors</h3>
+              <div class="live-pill"><div class="ld"></div> Live</div>
+            </div>
+            <div class="contrib-list" id="contribList">
+              <div style="padding:20px;text-align:center;color:var(--ts);font-size:13px;">No contributors yet — be the first!</div>
+            </div>
+          </div>
+        </div>
+
+        <p style="text-align:center;margin-top:28px;font-size:12px;color:var(--ts);">Share with someone from Kasipul who should be on this board.</p>
+
+      </div>
+    </section>
+
+
+    <!-- ==================== PANEL 6: PROGRAM + FOOTER ==================== -->
+    <section class="panel" id="program-slide">
+      <div class="program-inner">
+
+        <div class="program-head">
+          <span class="eyebrow">Program · April 25, 2026</span>
+          <h2>One day.<br/><em>Many stages.</em></h2>
+          <p>Three disciplines. All talent from Kasipul — no exceptions.</p>
+        </div>
+
+        <div class="event-list">
+
+          <!-- 01 — Boxing -->
+          <div class="ev-row">
+            <div class="ev-photo">
+              <div class="photo-slot">
+                <svg class="photo-slot-icon" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="12" cy="12" r="3"/></svg>
+                <span class="photo-slot-label">Add boxing photo</span>
+              </div>
+            </div>
+            <div class="ev-text">
+              <div class="ev-num">01 · Boxing</div>
+              <div class="ev-title">Boxing<br/><em>Tournament</em></div>
+              <p class="ev-desc">Inter-club elimination — Kasipul vs Homa Bay. Real bouts, real stakes. The heavyweight final closes the day.</p>
+            </div>
+          </div>
+
+          <!-- 02 — Live Performances -->
+          <div class="ev-row rev">
+            <div class="ev-photo">
+              <div class="photo-slot">
+                <svg class="photo-slot-icon" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="12" cy="12" r="3"/></svg>
+                <span class="photo-slot-label">Add performance photo</span>
+              </div>
+            </div>
+            <div class="ev-text">
+              <div class="ev-num">02 · Music &amp; Culture</div>
+              <div class="ev-title">Live<br/><em>Performances</em></div>
+              <p class="ev-desc">Music, spoken word, dance. Every performer introduced by name and village. Nothing imported.</p>
+            </div>
+          </div>
+
+          <!-- 03 — Deadlift -->
+          <div class="ev-row">
+            <div class="ev-photo">
+              <div class="photo-slot">
+                <svg class="photo-slot-icon" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="12" cy="12" r="3"/></svg>
+                <span class="photo-slot-label">Add deadlift photo</span>
+              </div>
+            </div>
+            <div class="ev-text">
+              <div class="ev-num">03 · Strength</div>
+              <div class="ev-title">Deadlift<br/><em>Showcase</em></div>
+              <p class="ev-desc">Kasipul's strength made undeniable. Jeff and the crowd count every lift together.</p>
+            </div>
+          </div>
+
+        </div><!-- /event-list -->
+
+        <!-- Footer -->
+        <footer>
+          <a href="#" class="foot-brand">
+            <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+              <path d="M100,40 L88,55 M100,40 L112,55" stroke="#fbbf24" stroke-width="5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M70,62 L61,72 M70,62 L79,72" stroke="#f59e0b" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M130,62 L121,72 M130,62 L139,72" stroke="#f59e0b" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M45,82 L38,90 M45,82 L52,90" stroke="#10b981" stroke-width="3.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M100,78 L91,88 M100,78 L109,88" stroke="#10b981" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M155,82 L148,90 M155,82 L162,90" stroke="#10b981" stroke-width="3.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M60,100 L54,107 M60,100 L66,107" stroke="#34d399" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M140,100 L134,107 M140,100 L146,107" stroke="#34d399" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            <div class="foot-brand-text">
+              <span class="ft">Kasipul</span>
+              <span class="fb">Rise</span>
+            </div>
+          </a>
+          <div class="foot-center">
+            April 25, 2026 · Agoro Sare, Oyugis · Kasipul Constituency · Homa Bay<br/>
+            <a href="mailto:hello@kasipulrise.co.ke">hello@kasipulrise.co.ke</a>
+          </div>
+          <div class="social-links">
+            <!-- Instagram -->
+            <a href="https://instagram.com/kasipulrise" target="_blank" rel="noopener" class="social-link" aria-label="Instagram">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="0.5" fill="currentColor" stroke="none"/></svg>
+            </a>
+            <!-- Facebook -->
+            <a href="https://facebook.com/kasipulrise" target="_blank" rel="noopener" class="social-link" aria-label="Facebook">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+            </a>
+            <!-- X / Twitter -->
+            <a href="https://x.com/kasipulrise" target="_blank" rel="noopener" class="social-link" aria-label="X (Twitter)">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+            </a>
+          </div>
+        </footer>
+
+      </div>
+    </section>
+
+  </div><!-- /horizontal-track -->
+</main>
+
+<script>
+  // ── PANEL NAVIGATION — no GSAP, pure CSS transform ──────────────────────
+  const TOTAL  = 6;
+  const track  = document.getElementById('track');
+  const panels = Array.from(document.querySelectorAll('.panel'));
+  let cur = 0;
+
+  function navTo(n) {
+    n = Math.max(0, Math.min(n, TOTAL - 1));
+    if (n === cur) return;
+    cur = n;
+    track.style.transform = 'translateX(' + (-cur * 100) + 'vw)';
+    updateDots();
+  }
+  window.navTo = navTo; // expose for inline onclick
+
+  // Panel indicator dots
+  const dotsEl = document.getElementById('navDots');
+  for (let i = 0; i < TOTAL; i++) {
+    const btn = document.createElement('button');
+    btn.className = 'nd' + (i === 0 ? ' active' : '');
+    btn.setAttribute('aria-label', 'Panel ' + (i + 1));
+    btn.addEventListener('click', () => navTo(i));
+    dotsEl.appendChild(btn);
+  }
+  function updateDots() {
+    dotsEl.querySelectorAll('.nd').forEach((d, i) => d.classList.toggle('active', i === cur));
+  }
+
+  // Wheel — respect panel's own vertical scroll first
+  let wTimer = null;
+  window.addEventListener('wheel', function(e) {
+    const p = panels[cur];
+    const scrollable = p.scrollHeight > p.clientHeight + 2;
+    if (scrollable) {
+      const atBottom = p.scrollTop + p.clientHeight >= p.scrollHeight - 4;
+      const atTop    = p.scrollTop <= 4;
+      if (e.deltaY > 0 && !atBottom) return;
+      if (e.deltaY < 0 && !atTop)    return;
+    }
+    e.preventDefault();
+    if (wTimer) return;
+    navTo(cur + (e.deltaY > 0 || e.deltaX > 0 ? 1 : -1));
+    wTimer = setTimeout(function() { wTimer = null; }, 600);
+  }, { passive: false });
+
+  // Touch swipe — horizontal only
+  var tx0 = 0, ty0 = 0;
+  window.addEventListener('touchstart', function(e) {
+    tx0 = e.touches[0].clientX;
+    ty0 = e.touches[0].clientY;
+  }, { passive: true });
+  window.addEventListener('touchend', function(e) {
+    var dx = e.changedTouches[0].clientX - tx0;
+    var dy = e.changedTouches[0].clientY - ty0;
+    if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 44) {
+      navTo(cur + (dx < 0 ? 1 : -1));
+    }
+  }, { passive: true });
+
+  // Keyboard
+  window.addEventListener('keydown', function(e) {
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown') { e.preventDefault(); navTo(cur + 1); }
+    if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp')   { e.preventDefault(); navTo(cur - 1); }
+  });
+
+  // Countdown
+  function tick() {
+    var target = new Date('2026-04-25T08:00:00+03:00');
+    var diff   = target - new Date();
+    if (diff <= 0) return;
+    var d = Math.floor(diff / 86400000);
+    var h = Math.floor((diff % 86400000) / 3600000);
+    var m = Math.floor((diff % 3600000) / 60000);
+    var s = Math.floor((diff % 60000) / 1000);
+    var pad = function(n) { return String(n).padStart(2, '0'); };
+    document.getElementById('cdDays').textContent  = d;
+    document.getElementById('cdHours').textContent = pad(h);
+    document.getElementById('cdMins').textContent  = pad(m);
+    document.getElementById('cdSecs').textContent  = pad(s);
+  }
+  tick();
+  setInterval(tick, 1000);
+
+  // Amount chips
+  document.querySelectorAll('.chip').forEach(function(c) {
+    c.addEventListener('click', function() {
+      document.querySelectorAll('.chip').forEach(function(x) { x.classList.remove('on'); });
+      c.classList.add('on');
+    });
+  });
+</script>
+
+<!-- Firebase SDK -->
+<script type="module">
+  import { initializeApp }   from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
+  import { getFirestore, collection, onSnapshot, query, orderBy }
+    from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+
+  const firebaseConfig = {
+    apiKey:            "AIzaSyC-lcu2rmgy7vIh1tMlHewaA52x-8LdezM",
+    authDomain:        "kasipul-rise-2026.firebaseapp.com",
+    projectId:         "kasipul-rise-2026",
+    storageBucket:     "kasipul-rise-2026.firebasestorage.app",
+    messagingSenderId: "887480309712",
+    appId:             "1:887480309712:web:a274f8b886fcf79348cbd5"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db  = getFirestore(app);
+
+  const GOAL_C = 1000, GOAL_K = 80000;
+
+  function countUp(el, target) {
+    var start = parseInt(el.textContent.replace(/\D/g,'')) || 0;
+    if (start === target) return;
+    var step = Math.max(1, Math.ceil(Math.abs(target - start) / 60));
+    var dir  = target > start ? 1 : -1;
+    var t = setInterval(function() {
+      start += step * dir;
+      if (dir > 0 ? start >= target : start <= target) { start = target; clearInterval(t); }
+      el.textContent = start.toLocaleString();
+    }, 16);
+  }
+
+  function setBar(id, pct) {
+    var el = document.getElementById(id);
+    if (el) el.style.width = Math.min(pct, 100) + '%';
+  }
+
+  var q = query(collection(db, 'contributions'), orderBy('timestamp', 'desc'));
+
+  onSnapshot(q, function(snapshot) {
+    var all = [];
+    snapshot.forEach(function(doc) { all.push(Object.assign({ id: doc.id }, doc.data())); });
+
+    var totalC = all.length;
+    var totalK = all.reduce(function(s, c) { return s + (c.amount || 0); }, 0);
+
+    // Hero
+    var heroN = document.getElementById('heroN');
+    if (heroN) countUp(heroN, totalC);
+    setBar('heroFill', (totalC / GOAL_C) * 100);
+
+    // Counter
+    var cnum = document.getElementById('cnum');
+    if (cnum) countUp(cnum, totalC);
+    setBar('cbarFill', (totalC / GOAL_C) * 100);
+
+    var ll = document.getElementById('liveLabel');
+    if (ll) ll.textContent = '▲ ' + totalC.toLocaleString() + ' contributors';
+
+    var cd = document.getElementById('counterDesc');
+    if (cd) cd.textContent = totalC.toLocaleString() + ' Kasipul people have already sent M-Pesa to build April 25. Your name joins theirs — public, permanent.';
+
+    // KSh
+    var ke = document.getElementById('kshsNum');
+    if (ke) ke.textContent = 'KSh ' + totalK.toLocaleString();
+    setBar('kshsBarFill', (totalK / GOAL_K) * 100);
+
+    // Ward leaderboard
+    var wardCounts = {};
+    all.forEach(function(c) {
+      var w = c.ward || 'Unknown';
+      wardCounts[w] = (wardCounts[w] || 0) + 1;
+    });
+    var sorted  = Object.entries(wardCounts).sort(function(a,b){ return b[1]-a[1]; });
+    var maxC    = (sorted[0] && sorted[0][1]) || 1;
+    var rCols   = ['r1','r2','r3'];
+    var bCols   = ['gold','teal',''];
+    var wb = document.getElementById('wardBoard');
+    if (wb) {
+      var head = wb.querySelector('.board-head');
+      wb.innerHTML = '';
+      wb.appendChild(head);
+      if (sorted.length) {
+        sorted.slice(0, 6).forEach(function(entry, i) {
+          var pct = Math.round((entry[1] / maxC) * 100);
+          var el  = document.createElement('div');
+          el.className = 'ward-row';
+          el.innerHTML =
+            '<span class="wr-rank ' + (rCols[i]||'') + '">' + (i+1) + '</span>' +
+            '<span class="wr-name">' + entry[0] + '</span>' +
+            '<div class="wr-bar"><div class="wr-bt"><div class="wr-bf ' + (bCols[i]||'') + '" style="width:' + pct + '%"></div></div></div>' +
+            '<span class="wr-n ' + (bCols[i]==='teal'?'tl':'') + '">' + entry[1] + '</span>';
+          wb.appendChild(el);
+        });
+      } else {
+        wb.insertAdjacentHTML('beforeend','<div class="ward-row" style="justify-content:center;padding:20px;color:var(--ts);font-size:13px;">No data yet — be the first!</div>');
+      }
+    }
+
+    // Contributors
+    var list = document.getElementById('contribList');
+    if (list) {
+      list.innerHTML = all.slice(0, 20).map(function(c) {
+        var init  = (c.name||'?').split(' ').map(function(x){return x[0];}).join('').toUpperCase().slice(0,2);
+        var diasp = c.diaspora || c.ward === 'Outside Kasipul';
+        return '<div class="contrib-row">' +
+          '<div class="contrib-av">' + init + '</div>' +
+          '<div class="contrib-info">' +
+            '<div class="contrib-name">' + (c.name||'—') + '</div>' +
+            '<div class="contrib-ward">' + (diasp ? '<span class="diasp">✦ ' + c.ward + '</span>' : c.ward) + '</div>' +
+            (c.story ? '<div class="contrib-quote">"' + c.story + '"</div>' : '') +
+          '</div>' +
+          '<div class="contrib-amt">KSh ' + (c.amount||0).toLocaleString() + '</div>' +
+        '</div>';
+      }).join('');
+    }
+  });
+</script>
+
+</body>
+</html>

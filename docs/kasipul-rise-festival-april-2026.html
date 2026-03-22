@@ -138,6 +138,24 @@
       text-align: center;
       padding: calc(var(--nav-offset) + 48px) 32px 80px;
       position: relative;
+      background-image: url('Pictures/hero section wallpaper.jpeg');
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+    }
+    .hero::before {
+      content: '';
+      position: absolute; inset: 0; z-index: 0;
+      pointer-events: none;
+      background:
+        /* strong centre burn — keeps text readable without fully blacking the photo */
+        radial-gradient(ellipse 80% 70% at 50% 50%, rgba(0,0,0,0.58) 0%, rgba(0,0,0,0.0) 100%),
+        /* top bar (nav area) */
+        linear-gradient(to bottom, rgba(0,0,0,0.72) 0%, rgba(0,0,0,0.0) 28%),
+        /* bottom fade */
+        linear-gradient(to top,    rgba(0,0,0,0.80) 0%, rgba(0,0,0,0.0) 40%),
+        /* overall base dim so the photo never wins */
+        rgba(0,0,0,0.38);
     }
 
     .hero-bg-bird {
@@ -150,9 +168,10 @@
     .hero-badge {
       display: inline-flex; align-items: center; gap: 8px;
       padding: 5px 14px;
-      border: 1px solid rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.28);
+      background: rgba(0,0,0,0.42);
       font-size: 10px; font-weight: 600; letter-spacing: 0.22em;
-      color: rgba(255,255,255,0.35); text-transform: uppercase;
+      color: rgba(255,255,255,0.78); text-transform: uppercase;
       margin-bottom: 32px; position: relative; z-index: 2;
     }
     .hero-badge::before {
@@ -170,22 +189,30 @@
       letter-spacing: -0.03em;
       text-transform: uppercase;
       margin-bottom: 24px;
+      text-shadow: 0 2px 24px rgba(0,0,0,0.7), 0 1px 4px rgba(0,0,0,0.9);
     }
-    .ht-kasipul { display: block; color: var(--tp); }
+    .ht-kasipul { display: block; color: #fff; }
     .ht-rise    { display: block; color: var(--gold); }
-    .ht-fest    { display: block; color: rgba(255,255,255,0.12); }
+    /* "FESTIVAL" — outline/ghost style so photo shows through but it's legible */
+    .ht-fest    {
+      display: block;
+      color: transparent;
+      -webkit-text-stroke: 1.5px rgba(255,255,255,0.28);
+      text-shadow: none;
+    }
 
     .hero-sub {
       font-size: clamp(10px, 1.2vw, 12px);
-      font-weight: 500;
+      font-weight: 600;
       letter-spacing: 0.22em;
       text-transform: uppercase;
-      color: var(--ts);
+      color: rgba(255,255,255,0.82);
       position: relative; z-index: 2;
       line-height: 1.9;
+      text-shadow: 0 1px 8px rgba(0,0,0,0.9);
     }
     .hero-sub strong { color: var(--gold); font-weight: 700; }
-    .one-st { font-size: 0.85em; color: var(--tt); letter-spacing: 0.1em; }
+    .one-st { font-size: 0.85em; color: rgba(255,255,255,0.5); letter-spacing: 0.1em; }
 
     .hero-counter {
       display: flex; align-items: center; gap: 14px;
@@ -195,7 +222,7 @@
     }
     .hc-track { width: clamp(140px, 28vw, 260px); height: 2px; background: rgba(255,255,255,0.07); }
     .hc-fill { height: 100%; background: linear-gradient(to right, var(--green), var(--gold)); width: 0%; transition: width 1.4s ease; }
-    .hc-label { font-size: 12px; color: var(--ts); white-space: nowrap; }
+    .hc-label { font-size: 12px; color: rgba(255,255,255,0.78); white-space: nowrap; text-shadow: 0 1px 6px rgba(0,0,0,0.9); }
     .hc-label strong { color: var(--gold); }
 
     .hero-ctas {
@@ -749,6 +776,252 @@
       #programPrev { left: calc(50% - 48px); }
       #programNext { right: calc(50% - 48px); }
     }
+
+  /* ===== PROGRAM CARD IMAGE ===== */
+  .program-card-gallery-trigger { cursor: pointer; }
+  .program-card-gallery-trigger:hover .program-photo-note { background: rgba(251,191,36,0.18); border-color: rgba(251,191,36,0.5); }
+  .program-card-img {
+    position: absolute; inset: 0; width: 100%; height: 100%;
+    object-fit: cover; display: block;
+  }
+
+  /* ===== EV-PHOTO CLICKABLE ===== */
+  .ev-photo-clickable { cursor: pointer; overflow: hidden; }
+  .ev-photo-clickable img { transition: transform 0.4s ease; }
+  .ev-photo-clickable:hover img { transform: scale(1.04); }
+
+  /* ===== GALLERY MODAL ===== */
+  .gallery-modal {
+    position: fixed; inset: 0; z-index: 9000;
+    background: #0a0a0a;
+    display: flex; flex-direction: column;
+    transform: translateY(100%);
+    transition: transform 0.42s cubic-bezier(0.4,0,0.2,1);
+    will-change: transform;
+  }
+  .gallery-modal.is-open { transform: translateY(0); }
+
+  .gallery-header {
+    display: flex; align-items: center; gap: 12px;
+    padding: 14px 16px 10px;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+    flex-shrink: 0;
+    background: #0a0a0a;
+  }
+  .gallery-tabs {
+    display: flex; gap: 6px; flex: 1;
+    overflow-x: auto; scrollbar-width: none;
+  }
+  .gallery-tabs::-webkit-scrollbar { display: none; }
+  .gallery-tab {
+    padding: 8px 14px;
+    border: 1px solid rgba(255,255,255,0.18);
+    background: transparent;
+    color: rgba(255,255,255,0.55);
+    font-family: inherit;
+    font-size: 10px; font-weight: 700;
+    letter-spacing: 0.1em; text-transform: uppercase;
+    cursor: pointer; white-space: nowrap;
+    transition: all 0.2s; border-radius: 0;
+  }
+  .gallery-tab.is-active {
+    background: var(--gold, #fbbf24);
+    color: #000; border-color: var(--gold, #fbbf24);
+  }
+  .gallery-close {
+    width: 38px; height: 38px; flex-shrink: 0;
+    border: 1px solid rgba(255,255,255,0.18);
+    background: transparent; color: #fff;
+    cursor: pointer; display: flex; align-items: center; justify-content: center;
+    transition: background 0.15s;
+  }
+  .gallery-close:hover { background: rgba(255,255,255,0.08); }
+
+  .gallery-body {
+    flex: 1; overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    padding: 2px;
+  }
+  .gallery-panel { display: none; }
+  .gallery-panel.is-active { display: block; }
+
+  /* Masonry columns */
+  .gallery-mosaic {
+    column-count: 3;
+    column-gap: 3px;
+    padding: 3px;
+  }
+  .gallery-mosaic img {
+    width: 100%; display: block;
+    margin-bottom: 3px;
+    break-inside: avoid;
+    cursor: pointer;
+    transition: transform 0.2s ease, opacity 0.15s;
+  }
+  .gallery-mosaic img:hover { transform: scale(1.015); }
+  .gallery-mosaic img:active { opacity: 0.75; }
+  @media (max-width: 600px) {
+    .gallery-mosaic { column-count: 2; }
+  }
+  @media (max-width: 380px) {
+    .gallery-mosaic { column-count: 2; column-gap: 2px; }
+  }
+
+  /* ===== LIGHTBOX ===== */
+  .gallery-lightbox {
+    position: fixed; inset: 0; z-index: 9500;
+    background: rgba(0,0,0,0.97);
+    display: flex; align-items: center; justify-content: center;
+    opacity: 0; pointer-events: none;
+    transition: opacity 0.22s;
+  }
+  .gallery-lightbox.is-open { opacity: 1; pointer-events: all; }
+  .lightbox-img {
+    max-width: calc(100vw - 120px); max-height: 88vh;
+    object-fit: contain; display: block;
+    user-select: none; -webkit-user-drag: none;
+    transition: opacity 0.15s;
+  }
+  @media (max-width: 600px) {
+    .lightbox-img { max-width: 100vw; max-height: 80vh; }
+  }
+  .lightbox-close {
+    position: absolute; top: 14px; right: 14px;
+    width: 40px; height: 40px;
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.18);
+    color: #fff; font-size: 22px; line-height: 1;
+    cursor: pointer; display: flex; align-items: center; justify-content: center;
+    z-index: 2; transition: background 0.15s;
+  }
+  .lightbox-close:hover { background: rgba(255,255,255,0.16); }
+  .lightbox-nav {
+    position: absolute; top: 50%; transform: translateY(-50%);
+    width: 48px; height: 64px;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.14);
+    color: #fff; font-size: 28px;
+    cursor: pointer; display: flex; align-items: center; justify-content: center;
+    z-index: 2; transition: background 0.15s;
+    user-select: none;
+  }
+  .lightbox-nav:hover { background: rgba(255,255,255,0.15); }
+  .lightbox-prev { left: 12px; }
+  .lightbox-next { right: 12px; }
+  @media (max-width: 600px) {
+    .lightbox-nav { width: 36px; height: 52px; font-size: 22px; }
+    .lightbox-prev { left: 4px; }
+    .lightbox-next { right: 4px; }
+  }
+  .lightbox-counter {
+    position: absolute; bottom: 18px; left: 50%; transform: translateX(-50%);
+    font-size: 11px; font-weight: 600; letter-spacing: 0.12em;
+    color: rgba(255,255,255,0.4); text-transform: uppercase;
+  }
+
+  /* Sticky audio widget */
+  .kr-audio-widget {
+    position: fixed;
+    right: 14px;
+    bottom: calc(14px + env(safe-area-inset-bottom, 0px));
+    z-index: 1200;
+    width: min(94vw, 360px);
+    font-family: 'DM Sans', sans-serif;
+  }
+  .kr-audio-trigger {
+    margin-left: auto;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 14px;
+    background: rgba(0,0,0,0.94);
+    color: var(--tp);
+    border: 1px solid rgba(255,255,255,0.14);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    cursor: pointer;
+  }
+  .kr-audio-widget.is-collapsed .kr-audio-panel { display: none; }
+  .kr-audio-widget:not(.is-collapsed) .kr-audio-trigger { display: none; }
+  .kr-audio-panel {
+    border: 1px solid rgba(255,255,255,0.13);
+    background: rgba(0,0,0,0.95);
+  }
+  .kr-audio-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 10px 12px;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+  }
+  .kr-audio-title {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ts);
+  }
+  .kr-audio-hide {
+    border: 1px solid rgba(255,255,255,0.15);
+    background: transparent;
+    color: var(--tp);
+    padding: 4px 10px;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    cursor: pointer;
+  }
+  .kr-audio-body {
+    display: grid;
+    gap: 10px;
+    padding: 12px;
+  }
+  .kr-audio-controls {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .kr-audio-toggle {
+    border: 1px solid rgba(251,191,36,0.4);
+    background: rgba(251,191,36,0.12);
+    color: var(--gold);
+    padding: 8px 12px;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    cursor: pointer;
+    flex-shrink: 0;
+  }
+  .kr-audio-status {
+    font-size: 11px;
+    color: var(--ts);
+  }
+  .kr-audio-frame-wrap {
+    border: 1px solid rgba(255,255,255,0.08);
+    background: #060606;
+  }
+  .kr-audio-placeholder {
+    min-height: 252px;
+    border: 1px dashed rgba(255,255,255,0.12);
+    color: var(--ts);
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 0 16px;
+  }
+  @media (max-width: 640px) {
+    .kr-audio-widget {
+      right: 10px;
+      width: min(96vw, 350px);
+    }
+  }
   </style>
 </head>
 <body>
@@ -868,6 +1141,7 @@
         <div class="counter-inner reveal" style="--reveal-delay:40ms;">
 
           <div class="counter-top">
+            <p style="font-size:11px;font-weight:500;letter-spacing:0.12em;text-transform:uppercase;color:rgba(255,255,255,0.32);margin-bottom:14px;">Kasipul Sub-County's youth are funding their own festival &mdash; April 25, 2026</p>
             <span class="eyebrow">Community Fund</span>
             <h2>1,000 Dreams.<br/><em>1,000 Builders.</em></h2>
             <p id="counterDesc">Loading live count…</p>
@@ -894,7 +1168,7 @@
               </div>
               <div class="kshs-div"></div>
               <div class="kshs-target">
-                <span class="kshs-num dim">KSh 80,000</span>
+                <span class="kshs-num dim">KSh 196,000</span>
                 <span class="kshs-label">community target</span>
               </div>
             </div>
@@ -922,6 +1196,19 @@
             </button>
           </div>
 
+          <!-- Explore nudge — shown only when arriving via QR (#panel=counter) -->
+          <div id="exploreNudge" style="display:none;margin-top:24px;align-items:center;justify-content:center;gap:20px;">
+            <button onclick="navTo(1)" style="background:none;border:none;cursor:pointer;display:flex;align-items:center;gap:6px;font-family:'DM Sans',sans-serif;font-size:10px;font-weight:600;letter-spacing:0.16em;text-transform:uppercase;color:rgba(255,255,255,0.28);padding:6px 0;transition:color 0.2s;" onmouseover="this.style.color='rgba(251,191,36,0.7)'" onmouseout="this.style.color='rgba(255,255,255,0.28)'">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+              Our Story
+            </button>
+            <span style="width:1px;height:14px;background:rgba(255,255,255,0.1);"></span>
+            <button onclick="navTo(3)" style="background:none;border:none;cursor:pointer;display:flex;align-items:center;gap:6px;font-family:'DM Sans',sans-serif;font-size:10px;font-weight:600;letter-spacing:0.16em;text-transform:uppercase;color:rgba(255,255,255,0.28);padding:6px 0;transition:color 0.2s;" onmouseover="this.style.color='rgba(251,191,36,0.7)'" onmouseout="this.style.color='rgba(255,255,255,0.28)'">
+              Be a Founder
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </button>
+          </div>
+
         </div>
       </div>
     </section>
@@ -938,8 +1225,12 @@
 
         <!-- M-Pesa CTA box -->
         <div class="mpesa-box">
-          <span class="ml">Send to this number</span>
-          <div class="mn">07XX XXX XXX</div>
+          <span class="ml">Lipa Na M-Pesa · Pay Bill</span>
+          <div class="mn">247247</div>
+          <div style="display:flex;flex-direction:column;align-items:center;gap:3px;margin-top:-6px;">
+            <span style="font-size:10px;font-weight:700;letter-spacing:0.18em;text-transform:uppercase;color:rgba(255,255,255,0.4);">Account Number</span>
+            <span style="font-size:clamp(18px,3.5vw,26px);font-weight:800;color:rgba(255,255,255,0.88);letter-spacing:0.06em;">145054</span>
+          </div>
           <div class="mamt">
             <span class="chip">KSh 100</span>
             <span class="chip on">KSh 500</span>
@@ -947,11 +1238,11 @@
             <span class="chip">KSh 2,000</span>
           </div>
           <div class="confirm-flow">
-            <div class="cf-step"><span class="cf-n">1</span><span>Contribute via M-Pesa to the number above. Any amount.</span></div>
-            <div class="cf-step"><span class="cf-n">2</span><span>Use <strong>your name</strong> as the M-Pesa reference when sending.</span></div>
-            <div class="cf-step"><span class="cf-n">3</span><span>WhatsApp <strong>your name, your ward, and one sentence</strong> — why you built this — to the Champions number <strong>(07XX XXX XXX)</strong>. Your words go on the board alongside your name.</span></div>
+            <div class="cf-step"><span class="cf-n">1</span><span>M-Pesa → <strong>Lipa Na M-Pesa → Pay Bill</strong>. Business No: <strong>247247</strong>. Account No: <strong>145054</strong>.</span></div>
+            <div class="cf-step"><span class="cf-n">2</span><span>Enter your amount, PIN, and confirm.</span></div>
+            <div class="cf-step"><span class="cf-n">3</span><span>WhatsApp <strong>your name, your ward, and one sentence</strong> — why you built this — to <strong>0702617775</strong>. Your words go on the board alongside your name.</span></div>
           </div>
-          <p class="mn2">Entry on the day is <strong>KSh 200 at the gate</strong> — separate from this.</p>
+          <p class="mn2">Entry on the day is <strong>KSh 200 at the gate</strong> — separate from this. Inquiries: <strong>0702617775</strong>.</p>
         </div>
 
         <!-- WhatsApp share -->
@@ -960,7 +1251,7 @@
             <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.09.537 4.054 1.475 5.765L.057 23.617a.75.75 0 0 0 .922.922l5.852-1.418A11.945 11.945 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.75a9.744 9.744 0 0 1-4.98-1.365l-.356-.213-3.694.894.912-3.589-.233-.369A9.745 9.745 0 0 1 2.25 12c0-5.376 4.374-9.75 9.75-9.75s9.75 4.374 9.75 9.75-4.374 9.75-9.75 9.75z"/></svg>
             Share on WhatsApp
           </a>
-          <p class="wa-note">Share with someone from Kasipul who should be on this board (Champions: 07XX XXX XXX).</p>
+          <p class="wa-note">Share with someone from Kasipul who should be on this board. Inquiries: 0702617775.</p>
         </div>
 
       </div>
@@ -1024,8 +1315,9 @@
 
           <div class="program-stage" id="programStage">
             <article class="program-card is-active" data-program-card="0" style="--card-bg:linear-gradient(135deg,#0f172a 0%,#1d4ed8 45%,#38bdf8 100%);">
-              <div class="program-card-media">
-                <div class="program-photo-note">Add boxing photo</div>
+              <div class="program-card-media program-card-gallery-trigger" onclick="openGallery('boxing')" title="View Boxing Gallery">
+                <img src="Pictures/boxing-gallery.jpeg" alt="Boxing" class="program-card-img" />
+                <div class="program-photo-note">View Gallery →</div>
               </div>
               <div class="program-card-body">
                 <span class="program-card-num">01 · Boxing</span>
@@ -1035,8 +1327,9 @@
             </article>
 
             <article class="program-card is-next" data-program-card="1" style="--card-bg:linear-gradient(135deg,#111827 0%,#6d28d9 45%,#ec4899 100%);">
-              <div class="program-card-media">
-                <div class="program-photo-note">Add performance photo</div>
+              <div class="program-card-media program-card-gallery-trigger" onclick="openGallery('music')" title="View Music & Culture Gallery">
+                <img src="Pictures/fashion gallery.jpeg" alt="Music & Culture" class="program-card-img" />
+                <div class="program-photo-note">View Gallery →</div>
               </div>
               <div class="program-card-body">
                 <span class="program-card-num">02 · Music &amp; Culture</span>
@@ -1046,8 +1339,9 @@
             </article>
 
             <article class="program-card is-prev" data-program-card="2" style="--card-bg:linear-gradient(135deg,#052e16 0%,#15803d 45%,#fbbf24 100%);">
-              <div class="program-card-media">
-                <div class="program-photo-note">Add deadlift photo</div>
+              <div class="program-card-media program-card-gallery-trigger" onclick="openGallery('deadlift')" title="View Deadlift Gallery">
+                <img src="Pictures/deadlift day.jpeg" alt="Deadlift" class="program-card-img" />
+                <div class="program-photo-note">View Gallery →</div>
               </div>
               <div class="program-card-body">
                 <span class="program-card-num">03 · Strength</span>
@@ -1068,11 +1362,8 @@
 
           <!-- 01 — Boxing -->
           <div class="ev-row">
-            <div class="ev-photo">
-              <div class="photo-slot">
-                <svg class="photo-slot-icon" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="12" cy="12" r="3"/></svg>
-                <span class="photo-slot-label">Add boxing photo</span>
-              </div>
+            <div class="ev-photo ev-photo-clickable" onclick="openGallery('boxing')">
+              <img src="Pictures/boxing-gallery.jpeg" alt="Boxing Tournament" style="width:100%;height:100%;object-fit:cover;display:block;border-radius:2px;" />
             </div>
             <div class="ev-text">
               <div class="ev-num">01 · Boxing</div>
@@ -1083,11 +1374,8 @@
 
           <!-- 02 — Live Performances -->
           <div class="ev-row rev">
-            <div class="ev-photo">
-              <div class="photo-slot">
-                <svg class="photo-slot-icon" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="12" cy="12" r="3"/></svg>
-                <span class="photo-slot-label">Add performance photo</span>
-              </div>
+            <div class="ev-photo ev-photo-clickable" onclick="openGallery('music')">
+              <img src="Pictures/fashion gallery.jpeg" alt="Music & Culture" style="width:100%;height:100%;object-fit:cover;display:block;border-radius:2px;" />
             </div>
             <div class="ev-text">
               <div class="ev-num">02 · Music &amp; Culture</div>
@@ -1098,11 +1386,8 @@
 
           <!-- 03 — Deadlift -->
           <div class="ev-row">
-            <div class="ev-photo">
-              <div class="photo-slot">
-                <svg class="photo-slot-icon" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="12" cy="12" r="3"/></svg>
-                <span class="photo-slot-label">Add deadlift photo</span>
-              </div>
+            <div class="ev-photo ev-photo-clickable" onclick="openGallery('deadlift')">
+              <img src="Pictures/deadlift day.jpeg" alt="Deadlift Showcase" style="width:100%;height:100%;object-fit:cover;display:block;border-radius:2px;" />
             </div>
             <div class="ev-text">
               <div class="ev-num">03 · Strength</div>
@@ -1209,16 +1494,34 @@
     return null;
   }
   var qpPanel = parsePanelToken(new URLSearchParams(window.location.search).get('panel'));
-  var hashPanel = window.location.hash.indexOf('#panel=') === 0
-    ? parsePanelToken(window.location.hash.slice(7))
-    : null;
+  var _rawHash = window.location.hash.slice(1); // strip #
+  var hashPanel = _rawHash.indexOf('panel=') === 0
+    ? parsePanelToken(_rawHash.slice(6))       // #panel=counter
+    : (_rawHash ? parsePanelToken(_rawHash) : null); // #counter direct
   var startPanel = qpPanel !== null ? qpPanel : hashPanel;
-  if (startPanel !== null) {
+  if (startPanel !== null && startPanel > 0) {
+    // Peek-and-settle: briefly show panel 0 (hero), then slide to destination
+    // This gives QR scanners context before the ask lands
+    cur = 0;
+    track.style.transform = 'translateX(0)';
+    updateDots();
+    updateActivePanel();
+    setTimeout(function() { navTo(startPanel); }, 480);
+  } else if (startPanel !== null) {
     cur = startPanel;
     track.style.transform = 'translateX(' + (-cur * 100) + 'vw)';
+    updateDots();
+    updateActivePanel();
+  } else {
+    updateDots();
+    updateActivePanel();
   }
-  updateDots();
-  updateActivePanel();
+
+  // Show explore nudge when arriving via QR/deep-link to counter panel
+  if (startPanel === 2) {
+    var nudge = document.getElementById('exploreNudge');
+    if (nudge) nudge.style.display = 'flex';
+  }
 
   // Wheel — respect panel's own vertical scroll first
   let wTimer = null;
@@ -1397,7 +1700,7 @@
   const app = initializeApp(firebaseConfig);
   const db  = getFirestore(app);
 
-  const GOAL_C = 1000, GOAL_K = 80000;
+  const GOAL_C = 1000, GOAL_K = 196000;
 
   function countUp(el, target) {
     var start = parseInt(el.textContent.replace(/\D/g,'')) || 0;
@@ -1496,6 +1799,317 @@
       }).join('');
     }
   });
+</script>
+
+
+<!-- ==================== PHOTO GALLERY MODAL ==================== -->
+<div id="galleryModal" class="gallery-modal" aria-hidden="true" aria-label="Photo Gallery">
+
+  <div class="gallery-header">
+    <div class="gallery-tabs">
+      <button class="gallery-tab is-active" data-gallery-tab="boxing" type="button">Boxing</button>
+      <button class="gallery-tab" data-gallery-tab="music" type="button">Music &amp; Culture</button>
+      <button class="gallery-tab" data-gallery-tab="deadlift" type="button">Deadlift</button>
+    </div>
+    <button class="gallery-close" id="galleryClose" type="button" aria-label="Close gallery">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+    </button>
+  </div>
+
+  <div class="gallery-body">
+
+    <!-- Boxing Gallery -->
+    <div class="gallery-panel is-active" data-gallery-panel="boxing">
+      <div class="gallery-mosaic">
+        <img src="Pictures/boxing/WhatsApp Image 2026-03-21 at 20.49.35.jpeg" loading="lazy" alt="Boxing 1" />
+        <img src="Pictures/boxing/WhatsApp Image 2026-03-21 at 20.49.36.jpeg" loading="lazy" alt="Boxing 2" />
+        <img src="Pictures/boxing/WhatsApp Image 2026-03-21 at 20.49.37.jpeg" loading="lazy" alt="Boxing 3" />
+        <img src="Pictures/boxing/WhatsApp Image 2026-03-21 at 20.49.38.jpeg" loading="lazy" alt="Boxing 4" />
+        <img src="Pictures/boxing/WhatsApp Image 2026-03-21 at 20.49.38 (1).jpeg" loading="lazy" alt="Boxing 5" />
+        <img src="Pictures/boxing/WhatsApp Image 2026-03-21 at 20.49.38 (2).jpeg" loading="lazy" alt="Boxing 6" />
+        <img src="Pictures/boxing/WhatsApp Image 2026-03-21 at 20.49.40.jpeg" loading="lazy" alt="Boxing 7" />
+        <img src="Pictures/boxing/WhatsApp Image 2026-03-21 at 20.49.44.jpeg" loading="lazy" alt="Boxing 8" />
+        <img src="Pictures/boxing/WhatsApp Image 2026-03-21 at 20.49.45.jpeg" loading="lazy" alt="Boxing 9" />
+        <img src="Pictures/boxing/WhatsApp Image 2026-03-21 at 20.49.46.jpeg" loading="lazy" alt="Boxing 10" />
+        <img src="Pictures/boxing/WhatsApp Image 2026-03-21 at 20.51.50.jpeg" loading="lazy" alt="Boxing 11" />
+        <img src="Pictures/boxing/WhatsApp Image 2026-03-21 at 20.51.52.jpeg" loading="lazy" alt="Boxing 12" />
+        <img src="Pictures/boxing/WhatsApp Image 2026-03-21 at 20.51.52 (1).jpeg" loading="lazy" alt="Boxing 13" />
+      </div>
+    </div>
+
+    <!-- Music & Culture Gallery -->
+    <div class="gallery-panel" data-gallery-panel="music">
+      <div class="gallery-mosaic">
+        <img src="Pictures/fashion/WhatsApp Image 2026-03-21 at 20.50.12.jpeg" loading="lazy" alt="Culture 1" />
+        <img src="Pictures/fashion/WhatsApp Image 2026-03-21 at 20.50.30.jpeg" loading="lazy" alt="Culture 2" />
+        <img src="Pictures/fashion/WhatsApp Image 2026-03-21 at 20.51.28.jpeg" loading="lazy" alt="Culture 3" />
+        <img src="Pictures/fashion/WhatsApp Image 2026-03-21 at 20.51.35.jpeg" loading="lazy" alt="Culture 4" />
+        <img src="Pictures/fashion/WhatsApp Image 2026-03-21 at 20.51.39.jpeg" loading="lazy" alt="Culture 5" />
+        <img src="Pictures/fashion/WhatsApp Image 2026-03-21 at 20.51.40.jpeg" loading="lazy" alt="Culture 6" />
+        <img src="Pictures/fashion/WhatsApp Image 2026-03-21 at 20.51.48.jpeg" loading="lazy" alt="Culture 7" />
+        <img src="Pictures/fashion/WhatsApp Image 2026-03-21 at 20.51.53.jpeg" loading="lazy" alt="Culture 8" />
+      </div>
+    </div>
+
+    <!-- Deadlift Gallery -->
+    <div class="gallery-panel" data-gallery-panel="deadlift">
+      <div class="gallery-mosaic">
+        <img src="Pictures/dead weights/WhatsApp Image 2026-03-21 at 20.49.51.jpeg" loading="lazy" alt="Deadlift 1" />
+        <img src="Pictures/dead weights/WhatsApp Image 2026-03-21 at 20.49.57.jpeg" loading="lazy" alt="Deadlift 2" />
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ==================== LIGHTBOX ==================== -->
+<div id="galleryLightbox" class="gallery-lightbox" aria-hidden="true">
+  <button class="lightbox-close" id="lightboxClose" type="button" aria-label="Close image">×</button>
+  <button class="lightbox-nav lightbox-prev" id="lightboxPrev" type="button" aria-label="Previous image">&#8249;</button>
+  <img class="lightbox-img" id="lightboxImg" src="" alt="" />
+  <button class="lightbox-nav lightbox-next" id="lightboxNext" type="button" aria-label="Next image">&#8250;</button>
+  <div class="lightbox-counter" id="lightboxCounter"></div>
+</div>
+
+<script>
+(function() {
+  var modal    = document.getElementById('galleryModal');
+  var closeBtn = document.getElementById('galleryClose');
+  var tabs     = modal.querySelectorAll('.gallery-tab');
+  var panels   = modal.querySelectorAll('.gallery-panel');
+  var lightbox = document.getElementById('galleryLightbox');
+  var lbImg    = document.getElementById('lightboxImg');
+  var lbClose  = document.getElementById('lightboxClose');
+  var lbPrev   = document.getElementById('lightboxPrev');
+  var lbNext   = document.getElementById('lightboxNext');
+  var lbCtr    = document.getElementById('lightboxCounter');
+
+  // Collect all images per active panel
+  var allImgs = [];
+  var currentIdx = 0;
+
+  function getActiveImgs() {
+    var activePanel = modal.querySelector('.gallery-panel.is-active');
+    return activePanel ? Array.from(activePanel.querySelectorAll('.gallery-mosaic img')) : [];
+  }
+
+  function openGallery(cat) {
+    switchTab(cat || 'boxing');
+    modal.classList.add('is-open');
+    modal.setAttribute('aria-hidden', 'false');
+    document.body.style.overflow = 'hidden';
+  }
+  window.openGallery = openGallery;
+
+  function closeGallery() {
+    modal.classList.remove('is-open');
+    modal.setAttribute('aria-hidden', 'true');
+    document.body.style.overflow = '';
+  }
+
+  function switchTab(cat) {
+    tabs.forEach(function(t) { t.classList.toggle('is-active', t.dataset.galleryTab === cat); });
+    panels.forEach(function(p) { p.classList.toggle('is-active', p.dataset.galleryPanel === cat); });
+  }
+
+  closeBtn.addEventListener('click', closeGallery);
+  tabs.forEach(function(t) {
+    t.addEventListener('click', function() { switchTab(t.dataset.galleryTab); });
+  });
+
+  // Swipe down to close gallery (only in gallery body, not lightbox)
+  var startY = 0;
+  modal.addEventListener('touchstart', function(e) { startY = e.touches[0].clientY; }, { passive: true });
+  modal.addEventListener('touchend', function(e) {
+    if (e.changedTouches[0].clientY - startY > 90) closeGallery();
+  }, { passive: true });
+
+  // ── LIGHTBOX ──────────────────────────────────────
+  function showLightbox(imgs, idx) {
+    allImgs = imgs;
+    currentIdx = idx;
+    lbImg.style.opacity = '0';
+    lbImg.src = allImgs[currentIdx].src;
+    lbImg.onload = function() { lbImg.style.opacity = '1'; };
+    lbCtr.textContent = (currentIdx + 1) + ' / ' + allImgs.length;
+    lbPrev.style.display = allImgs.length > 1 ? 'flex' : 'none';
+    lbNext.style.display = allImgs.length > 1 ? 'flex' : 'none';
+    lightbox.classList.add('is-open');
+    lightbox.setAttribute('aria-hidden', 'false');
+  }
+
+  function navigate(dir) {
+    if (!allImgs.length) return;
+    currentIdx = (currentIdx + dir + allImgs.length) % allImgs.length;
+    lbImg.style.opacity = '0';
+    setTimeout(function() {
+      lbImg.src = allImgs[currentIdx].src;
+      lbImg.onload = function() { lbImg.style.opacity = '1'; };
+      lbCtr.textContent = (currentIdx + 1) + ' / ' + allImgs.length;
+    }, 120);
+  }
+
+  modal.querySelectorAll('.gallery-mosaic img').forEach(function(img) {
+    img.addEventListener('click', function() {
+      var imgs = getActiveImgs();
+      var idx = imgs.indexOf(img);
+      showLightbox(imgs, idx >= 0 ? idx : 0);
+    });
+  });
+
+  lbPrev.addEventListener('click', function(e) { e.stopPropagation(); navigate(-1); });
+  lbNext.addEventListener('click', function(e) { e.stopPropagation(); navigate(1); });
+
+  function closeLightbox() {
+    lightbox.classList.remove('is-open');
+    lightbox.setAttribute('aria-hidden', 'true');
+    lbImg.src = '';
+  }
+  lbClose.addEventListener('click', closeLightbox);
+  lightbox.addEventListener('click', function(e) { if (e.target === lightbox) closeLightbox(); });
+
+  // Keyboard navigation
+  document.addEventListener('keydown', function(e) {
+    if (lightbox.classList.contains('is-open')) {
+      if (e.key === 'ArrowRight') navigate(1);
+      else if (e.key === 'ArrowLeft') navigate(-1);
+      else if (e.key === 'Escape') closeLightbox();
+    } else if (modal.classList.contains('is-open') && e.key === 'Escape') {
+      closeGallery();
+    }
+  });
+
+  // Touch swipe left/right in lightbox
+  var lbStartX = 0, lbStartY = 0;
+  lightbox.addEventListener('touchstart', function(e) {
+    lbStartX = e.touches[0].clientX;
+    lbStartY = e.touches[0].clientY;
+  }, { passive: true });
+  lightbox.addEventListener('touchend', function(e) {
+    var dx = e.changedTouches[0].clientX - lbStartX;
+    var dy = e.changedTouches[0].clientY - lbStartY;
+    if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 50) {
+      navigate(dx < 0 ? 1 : -1);
+    } else if (dy > 80 && Math.abs(dy) > Math.abs(dx)) {
+      closeLightbox();
+    }
+  }, { passive: true });
+})();
+</script>
+
+<div id="krAudioWidget" class="kr-audio-widget is-collapsed" aria-live="polite">
+  <button type="button" class="kr-audio-trigger" id="krAudioOpen">Music</button>
+  <div class="kr-audio-panel">
+    <div class="kr-audio-head">
+      <span class="kr-audio-title">Kasipul Rise Audio</span>
+      <button type="button" class="kr-audio-hide" id="krAudioHide">Hide</button>
+    </div>
+    <div class="kr-audio-body">
+      <div class="kr-audio-controls">
+        <button type="button" class="kr-audio-toggle" id="krAudioToggle">Unmute</button>
+        <span class="kr-audio-status" id="krAudioStatus">Muted for faster loading</span>
+      </div>
+      <div class="kr-audio-frame-wrap">
+        <iframe
+          id="krAudioFrame"
+          src="about:blank"
+          scrolling="no"
+          width="100%"
+          height="252"
+          frameborder="0"
+          title="gidigidi_majimaji_unbwogable_aac_43761"
+          loading="lazy"
+        ></iframe>
+      </div>
+      <div class="kr-audio-placeholder" id="krAudioPlaceholder">
+        Music is muted. Tap Unmute to load the embedded player.
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function () {
+  var STORAGE_KEY = 'kasipul-rise-audio-widget-v1';
+  var EMBED_URL =
+    'https://audiomack.com/embed/gabrielle-besos/song/gidigidi-majimaji-unbwogable-aac-43761';
+
+  var widget = document.getElementById('krAudioWidget');
+  var openButton = document.getElementById('krAudioOpen');
+  var hideButton = document.getElementById('krAudioHide');
+  var toggleButton = document.getElementById('krAudioToggle');
+  var status = document.getElementById('krAudioStatus');
+  var frame = document.getElementById('krAudioFrame');
+  var placeholder = document.getElementById('krAudioPlaceholder');
+
+  if (
+    !widget ||
+    !openButton ||
+    !hideButton ||
+    !toggleButton ||
+    !status ||
+    !frame ||
+    !placeholder
+  ) {
+    return;
+  }
+
+  var state = { collapsed: true, enabled: false };
+  try {
+    var raw = window.localStorage.getItem(STORAGE_KEY);
+    if (raw) {
+      var saved = JSON.parse(raw);
+      if (typeof saved.collapsed === 'boolean') state.collapsed = saved.collapsed;
+      if (typeof saved.enabled === 'boolean') state.enabled = saved.enabled;
+    }
+  } catch (error) {}
+
+  function persist() {
+    try {
+      window.localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    } catch (error) {}
+  }
+
+  function render() {
+    widget.classList.toggle('is-collapsed', state.collapsed);
+    toggleButton.textContent = state.enabled ? 'Mute' : 'Unmute';
+    status.textContent = state.enabled
+      ? 'Audiomack player loaded'
+      : 'Muted for faster loading';
+
+    if (state.enabled) {
+      if (frame.getAttribute('src') !== EMBED_URL) {
+        frame.setAttribute('src', EMBED_URL);
+      }
+      frame.style.display = 'block';
+      placeholder.style.display = 'none';
+    } else {
+      frame.setAttribute('src', 'about:blank');
+      frame.style.display = 'none';
+      placeholder.style.display = 'flex';
+    }
+  }
+
+  openButton.addEventListener('click', function () {
+    state.collapsed = false;
+    persist();
+    render();
+  });
+
+  hideButton.addEventListener('click', function () {
+    state.collapsed = true;
+    persist();
+    render();
+  });
+
+  toggleButton.addEventListener('click', function () {
+    state.enabled = !state.enabled;
+    persist();
+    render();
+  });
+
+  render();
+})();
 </script>
 
 </body>

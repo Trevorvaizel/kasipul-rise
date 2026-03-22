@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kasipul Rise — Scan Me Card (Print)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700;9..40,800&display=swap" rel="stylesheet">
+  <style>
+    /* ─── RESET ─── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    /* ─── PRINT PAGE: A5 portrait ─── */
+    @page {
+      size: 148mm 210mm;
+      margin: 0;
+    }
+
+    html, body {
+      width: 148mm;
+      height: 210mm;
+      background: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'DM Sans', sans-serif;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+
+    /* ─── CARD ─── */
+    .card {
+      width: 148mm;
+      height: 210mm;
+      background: #050505;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      padding: 11mm 10mm 9mm;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Subtle gold inner border — signals formality */
+    .card::before {
+      content: '';
+      position: absolute;
+      inset: 4.5mm;
+      border: 0.4px solid rgba(251, 191, 36, 0.28);
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    /* Background glow — prints dark, adds depth */
+    .card::after {
+      content: '';
+      position: absolute;
+      top: -20mm;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 120mm;
+      height: 120mm;
+      background: radial-gradient(circle, rgba(251,191,36,0.06) 0%, transparent 70%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ─── TOP: BRAND + DATE ─── */
+    .top {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 3px;
+      z-index: 2;
+      text-align: center;
+    }
+
+    .brand-lockup {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* K-Rise mark — minimal SVG equivalent */
+    .brand-icon {
+      width: 16px;
+      height: 16px;
+      opacity: 0.9;
+    }
+
+    .brand-text {
+      display: flex;
+      flex-direction: column;
+      line-height: 1.15;
+    }
+
+    .brand-top {
+      font-size: 5.5pt;
+      font-weight: 600;
+      letter-spacing: 0.28em;
+      color: rgba(255,255,255,0.45);
+      text-transform: uppercase;
+    }
+
+    .brand-bottom {
+      font-size: 8pt;
+      font-weight: 800;
+      letter-spacing: 0.18em;
+      color: #fbbf24;
+      text-transform: uppercase;
+    }
+
+    .date-rule {
+      width: 20mm;
+      height: 0.3px;
+      background: rgba(251,191,36,0.3);
+      margin: 3px 0;
+    }
+
+    .date-line {
+      font-size: 6pt;
+      font-weight: 500;
+      letter-spacing: 0.14em;
+      color: rgba(255,255,255,0.3);
+      text-transform: uppercase;
+    }
+
+    /* ─── MIDDLE: CONTEXT + QR ─── */
+    .middle {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 5mm;
+      z-index: 2;
+    }
+
+    .context-text {
+      text-align: center;
+      max-width: 110mm;
+    }
+
+    .context-main {
+      font-size: 12pt;
+      font-weight: 800;
+      color: #fff;
+      letter-spacing: -0.01em;
+      line-height: 1.25;
+    }
+
+    .context-main em {
+      color: #fbbf24;
+      font-style: normal;
+    }
+
+    .context-sub {
+      margin-top: 2mm;
+      font-size: 7pt;
+      font-weight: 400;
+      color: rgba(255,255,255,0.38);
+      letter-spacing: 0.06em;
+      line-height: 1.5;
+    }
+
+    /* QR FRAME */
+    .qr-outer {
+      position: relative;
+      padding: 3mm;
+      background: #fff;
+      /* Gold corner accents via box-shadow trick */
+      box-shadow:
+        0 0 0 1px #fbbf24,
+        4px 4px 0 0 rgba(251,191,36,0.15);
+    }
+
+    /* Corner marks */
+    .qr-outer::before,
+    .qr-outer::after {
+      content: '';
+      position: absolute;
+      width: 5mm;
+      height: 5mm;
+    }
+
+    .qr-outer::before {
+      top: -1.5px;
+      left: -1.5px;
+      border-top: 2px solid #fbbf24;
+      border-left: 2px solid #fbbf24;
+    }
+
+    .qr-outer::after {
+      bottom: -1.5px;
+      right: -1.5px;
+      border-bottom: 2px solid #fbbf24;
+      border-right: 2px solid #fbbf24;
+    }
+
+    #qrcode {
+      display: block;
+      width: 48mm;
+      height: 48mm;
+      line-height: 0;
+    }
+
+    #qrcode canvas,
+    #qrcode img {
+      width: 48mm !important;
+      height: 48mm !important;
+      display: block;
+    }
+
+    .qr-scan-hint {
+      font-size: 6pt;
+      letter-spacing: 0.18em;
+      color: rgba(255,255,255,0.22);
+      text-transform: uppercase;
+      text-align: center;
+    }
+
+    /* ─── BOTTOM: HERO HEADLINE ─── */
+    .bottom {
+      z-index: 2;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2.5mm;
+    }
+
+    .hero-eyebrow {
+      font-size: 6pt;
+      font-weight: 600;
+      letter-spacing: 0.25em;
+      color: rgba(251,191,36,0.5);
+      text-transform: uppercase;
+    }
+
+    .hero-headline {
+      line-height: 0.92;
+    }
+
+    .hero-line-1 {
+      display: block;
+      font-size: 30pt;
+      font-weight: 800;
+      color: #ffffff;
+      letter-spacing: -0.03em;
+      text-transform: uppercase;
+    }
+
+    .hero-line-2 {
+      display: block;
+      font-size: 30pt;
+      font-weight: 800;
+      color: #fbbf24;
+      letter-spacing: -0.03em;
+      text-transform: uppercase;
+    }
+
+    .hero-sub {
+      font-size: 7pt;
+      font-weight: 400;
+      color: rgba(255,255,255,0.28);
+      letter-spacing: 0.08em;
+    }
+
+    /* ─── FOOTER: URL ─── */
+    .footer {
+      z-index: 2;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .footer-dot {
+      width: 2.5px;
+      height: 2.5px;
+      background: rgba(251,191,36,0.4);
+      border-radius: 50%;
+    }
+
+    .footer-url {
+      font-size: 5.5pt;
+      letter-spacing: 0.12em;
+      color: rgba(255,255,255,0.18);
+      text-transform: lowercase;
+    }
+
+    /* ─── SCREEN PREVIEW: show card centered on screen ─── */
+    @media screen {
+      html, body {
+        width: 100vw;
+        height: 100vh;
+        background: #1a1a1a;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .card {
+        /* Scale to fit screen nicely */
+        transform-origin: center center;
+        box-shadow: 0 40px 80px rgba(0,0,0,0.8);
+      }
+
+      .print-hint {
+        position: fixed;
+        bottom: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: rgba(251,191,36,0.9);
+        color: #000;
+        font-family: 'DM Sans', sans-serif;
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        padding: 8px 18px;
+        cursor: pointer;
+        border: none;
+      }
+
+      .print-hint:hover { background: #fcd34d; }
+    }
+
+    @media print {
+      .print-hint { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="card">
+
+    <!-- TOP: BRAND -->
+    <div class="top">
+      <div class="brand-lockup">
+        <svg class="brand-icon" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="2" y="2" width="24" height="24" rx="1" stroke="#fbbf24" stroke-width="1.2" fill="none"/>
+          <path d="M8 20 L14 8 L20 20" stroke="#fbbf24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+          <path d="M10.5 15.5 L17.5 15.5" stroke="#fbbf24" stroke-width="1.4" stroke-linecap="round"/>
+        </svg>
+        <div class="brand-text">
+          <span class="brand-top">Kasipul</span>
+          <span class="brand-bottom">Rise</span>
+        </div>
+      </div>
+      <div class="date-rule"></div>
+      <div class="date-line">April 25, 2026 &nbsp;·&nbsp; Agoro Sare, Oyugis</div>
+    </div>
+
+    <!-- MIDDLE: CONTEXT + QR -->
+    <div class="middle">
+      <div class="context-text">
+        <div class="context-main">
+          1,000 Dreams.<br><em>1,000 Builders.</em>
+        </div>
+        <div class="context-sub">
+          Kasipul's youth are funding their own festival.<br>
+          No waiting. No asking. Already building.
+        </div>
+      </div>
+
+      <div class="qr-outer">
+        <div id="qrcode"></div>
+      </div>
+
+      <div class="qr-scan-hint">Scan to see the movement</div>
+    </div>
+
+    <!-- BOTTOM: HERO HEADLINE -->
+    <div class="bottom">
+      <div class="hero-eyebrow">A message for</div>
+      <div class="hero-headline">
+        <span class="hero-line-1">Scan Me,</span>
+        <span class="hero-line-2">Mr. President.</span>
+      </div>
+      <div class="hero-sub">Kasipul Sub-County, Homa Bay</div>
+    </div>
+
+    <!-- FOOTER: URL -->
+    <div class="footer">
+      <div class="footer-dot"></div>
+      <span class="footer-url">kasipul-rise-2026.web.app</span>
+      <div class="footer-dot"></div>
+    </div>
+
+  </div>
+
+  <!-- SCREEN: print button -->
+  <button class="print-hint" onclick="window.print()">Print This Card (A5)</button>
+
+  <!-- QR CODE GENERATOR -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <script>
+    // Generates QR pointing to the Community Fund section
+    new QRCode(document.getElementById("qrcode"), {
+      text: "https://kasipul-rise-2026.web.app/#panel=counter",
+      width: 182,   // ~48mm at 96dpi
+      height: 182,
+      colorDark: "#000000",
+      colorLight: "#ffffff",
+      correctLevel: QRCode.CorrectLevel.H  // High correction — survives print imperfections
+    });
+  </script>
+</body>
+</html>
